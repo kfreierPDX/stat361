@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stat 361: Statistical Methods I - Student Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Roboto+Slab:wght@400;700&display=swap');
+        
+        :root {
+            --psu-green: #154734;
+            --psu-logo-green: #6B9E28;
+            --psu-light-green: #899d78;
+            --psu-accent: #6B9E28;
+            --bg-main: #f9faf9;
+            --text-primary: #1a201c;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Roboto Slab', serif;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 400px;
+        }
+
+        .week-tab {
+            transition: all 0.25s ease;
+            cursor: pointer;
+            border-bottom: 4px solid transparent;
+        }
+
+        .week-tab.active {
+            border-bottom-color: var(--psu-green);
+            color: var(--psu-green);
+            font-weight: 700;
+        }
+
+        .week-tab:hover:not(.active) {
+            border-bottom-color: var(--psu-logo-green);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #e2e8e4;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: var(--psu-logo-green);
+            border-radius: 3px;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .objective-tag {
+            background: #f2f7ec;
+            color: var(--psu-green);
+            padding: 4px 12px;
+            border: 1px solid var(--psu-logo-green);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-block;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+
+        .psu-gradient {
+            background: linear-gradient(135deg, var(--psu-green) 0%, #2d5a47 100%);
+        }
+
+        blockquote {
+            border-left: 2px solid var(--psu-logo-green);
+            padding-left: 1rem;
+            font-style: italic;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease-out, padding 0.25s ease;
+        }
+
+        .accordion-content.open {
+            max-height: 1200px;
+            transition: max-height 0.5s ease-in;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="max-w-7xl mx-auto">
+        <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between border-b-4 border-[#154734] pb-8">
+            <div>
+                <div class="mb-3">
+                    <h2 class="text-xs font-bold uppercase tracking-[0.2em] text-stone-500">Portland State University</h2>
+                    <span class="text-[10px] font-bold text-[#154734] uppercase tracking-wider block">Department of Mathematics & Statistics</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-bold text-[#154734] leading-tight">Stat 361: Statistical Methods I</h1>
+            </div>
+            <div class="mt-6 md:mt-0 flex flex-wrap gap-3">
+                <span class="bg-[#154734] text-white px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider shadow-sm">Fall 2026</span>
+            </div>
+        </header>
+
+        <nav class="mb-12 bg-white rounded-xl shadow-sm border border-stone-200 p-2">
+            <div class="flex items-center px-4 pt-2 border-b border-stone-100 mb-2">
+                <span class="text-[10px] font-black uppercase text-stone-400 tracking-widest">Select Course Week</span>
+            </div>
+            <div id="week-nav" class="flex overflow-x-auto space-x-6 px-4 pb-2 custom-scrollbar whitespace-nowrap">
+                <!-- Nav generated dynamically via JavaScript -->
+            </div>
+        </nav>
+
+        <main class="grid grid-cols-1 xl:grid-cols-12 gap-10">
+            
+            <!-- Left Column: Primary Weekly Content & Analysis -->
+            <div class="xl:col-span-8 space-y-10">
+                
+                <!-- Weekly Details Hero Panel -->
+                <div id="details-panel" class="bg-white rounded-2xl shadow-md border border-stone-100 overflow-hidden fade-in">
+                    <div class="psu-gradient p-6 text-white flex justify-between items-center">
+                        <div>
+                            <h3 id="display-week" class="text-3xl font-bold">Week 1</h3>
+                            <p id="display-dates" class="opacity-80 font-medium tracking-wide"></p>
+                        </div>
+                        <div class="text-right border-l border-white/20 pl-6">
+                            <span class="text-[10px] font-bold uppercase block tracking-widest opacity-70">Module Focus</span>
+                            <span id="display-title" class="text-xl font-bold"></span>
+                        </div>
+                    </div>
+
+                    <!-- Event / Exam Banner -->
+                    <div id="event-banner" class="hidden bg-amber-500 text-white px-6 py-2.5 font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-inner">
+                        <span class="text-base">📝</span>
+                        <span id="display-event-note"></span>
+                    </div>
+
+                    <div class="p-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                            <!-- Readings Column -->
+                            <div class="space-y-6">
+                                <section>
+                                    <h4 class="text-xs font-bold text-[#154734] uppercase tracking-widest mb-4 flex items-center gap-2">
+                                        <span class="w-2 h-4 bg-[#6B9E28] rounded-full"></span>
+                                        Reading Assignments
+                                    </h4>
+                                    <div class="space-y-4">
+                                        <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-[#6B9E28]">
+                                            <p class="text-[10px] font-black text-stone-400 uppercase mb-1">Conceptual Foundations</p>
+                                            <p id="read-spiegel" class="text-sm font-semibold text-[#154734]"></p>
+                                            <p class="text-[10px] text-stone-500 mt-1 italic">D. Spiegelhalter (The Art of Statistics)</p>
+                                        </div>
+                                        <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-[#154734]">
+                                            <p class="text-[10px] font-black text-stone-400 uppercase mb-1">Rigor & Formulas (OER)</p>
+                                            <p id="read-oer" class="text-sm font-semibold text-[#154734]"></p>
+                                            <p id="read-oer-authors" class="text-[10px] text-stone-500 mt-1 italic"></p>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+
+                            <!-- Questions & Outcomes Column -->
+                            <div class="space-y-6">
+                                <section>
+                                    <h4 class="text-xs font-bold text-[#154734] uppercase tracking-widest mb-4 flex items-center gap-2">
+                                        <span class="w-2 h-4 bg-[#6B9E28] rounded-full"></span>
+                                        Essential Questions
+                                    </h4>
+                                    <div id="questions-list" class="text-sm text-stone-700 space-y-3 font-medium">
+                                        <!-- Questions injected via JavaScript -->
+                                    </div>
+                                </section>
+
+                                <section class="pt-4 border-t border-stone-100">
+                                    <p class="text-[10px] font-bold text-stone-400 uppercase mb-3 tracking-widest">Student Learning Outcomes (SLOs)</p>
+                                    <div id="objectives-tags" class="flex flex-wrap">
+                                        <!-- Tags injected via JavaScript -->
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+
+                        <div class="mt-10 pt-8 border-t-2 border-stone-50">
+                            <div class="bg-[#154734] p-8 rounded-2xl text-white shadow-lg border-l-8 border-[#6B9E28]">
+                                <h4 class="font-bold text-lg mb-4 flex items-center gap-2">
+                                    <span class="text-2xl font-light italic text-[#6B9E28]">∫</span> Calculus & Derivation Focus
+                                </h4>
+                                <p id="math-box" class="text-sm leading-relaxed opacity-90">
+                                    <!-- Math proof details injected via JavaScript -->
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-md border border-stone-100">
+                    <h4 class="text-xs font-black text-[#154734] uppercase tracking-widest mb-6 text-center">Module Rigor Analysis</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                        <div class="md:col-span-7 chart-container">
+                            <canvas id="focusChart"></canvas>
+                        </div>
+                        <div class="md:col-span-5 space-y-3">
+                            <div class="flex items-center gap-2 text-xs text-stone-600">
+                                <span class="w-3 h-3 rounded-full bg-[#154734] shrink-0"></span>
+                                <span><b>Intuition:</b> Conceptual understanding (The "Art")</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-stone-600">
+                                <span class="w-3 h-3 rounded-full bg-[#6B9E28] shrink-0"></span>
+                                <span><b>Math/Proof:</b> Calculus rigor & derivations</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-stone-600">
+                                <span class="w-3 h-3 rounded-full bg-[#899d78] shrink-0"></span>
+                                <span><b>Tooling:</b> Applied software proficiency (R & JMP)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-[#f4f8ef] p-8 rounded-2xl border border-[#6B9E28]/40">
+                    <h4 class="text-xs font-black text-[#154734] uppercase tracking-widest mb-6 border-b border-[#6B9E28]/30 pb-2">Student Learning Outcome (SLO) Master Key</h4>
+                    <div id="slo-master-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed text-[#1a201c]">
+                        <!-- SLO items rendered via JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="xl:col-span-4 space-y-10">
+                
+                <!-- Instructor & Course Information Card -->
+                <div class="bg-white p-8 rounded-2xl border border-stone-200 shadow-md">
+                    <h4 class="text-xs font-black text-[#154734] uppercase tracking-widest mb-6 border-b border-stone-200 pb-3 flex items-center gap-2">
+                        <span class="w-2 h-4 bg-[#6B9E28] rounded-full"></span>
+                        Course & Instructor Info
+                    </h4>
+                    
+                    <div class="space-y-5 text-xs text-stone-700">
+                        <div>
+                            <span class="text-[10px] font-black uppercase text-stone-400 tracking-wider block mb-1">Course Code & Name</span>
+                            <p class="font-bold text-base text-[#154734]">Stat 361: Statistical Methods I</p>
+                            <p class="text-stone-500 font-medium text-[11px] mt-0.5">Calculus-Based Undergraduate Sequence</p>
+                        </div>
+
+                        <div class="pt-4 border-t border-stone-100">
+                            <span class="text-[10px] font-black uppercase text-stone-400 tracking-wider block mb-1">Instructor</span>
+                            <p class="font-bold text-sm text-[#154734]">Kate Freier, PhD</p>
+                            <p class="text-stone-500 text-[11px]">Office: FMH 464S</p>
+                            <a href="mailto:kfreier@pdx.edu" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#6B9E28] hover:underline mt-1.5 bg-[#f4f8ef] px-2.5 py-1 rounded-md border border-[#6B9E28]/30">
+                                ✉ kfreier@pdx.edu
+                            </a>
+                        </div>
+
+                        <div class="pt-4 border-t border-stone-100">
+                            <span class="text-[10px] font-black uppercase text-stone-400 tracking-wider block mb-1">Course Meeting Times</span>
+                            <p class="font-bold text-stone-800 text-sm">Mon / Wed / Fri</p>
+                            <p class="text-stone-600 font-medium">11:00 AM – 12:05 PM (FMH B157)</p>
+                        </div>
+
+                        <div class="pt-4 border-t border-stone-100">
+                            <span class="text-[10px] font-black uppercase text-stone-400 tracking-wider block mb-1">Drop-In Office Hours</span>
+                            <div class="space-y-1.5">
+                                <div>
+                                    <span class="font-bold text-stone-800">Wednesdays:</span>
+                                    <span class="text-stone-600 font-medium ml-1">3:00 PM – 4:00 PM (FMH 464S)</span>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-stone-800">Tuesdays:</span>
+                                    <span class="text-stone-600 font-medium ml-1">10:00 AM – 11:00 AM <span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-1.5 py-0.5 rounded ml-1 uppercase">Zoom</span></span>
+                                </div>
+                                <p class="text-[10px] text-stone-400 italic mt-1">Also available by appointment or talk after class.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teaching Philosophy Card -->
+                <div class="bg-[#154734] p-8 rounded-2xl text-white shadow-xl">
+                    <h4 class="font-bold text-xl mb-6 flex items-center gap-2">
+                        Stat 361 Philosophy
+                    </h4>
+                    
+                    <div class="space-y-6">
+                        <p class="text-sm leading-relaxed opacity-90">
+                            Statistics is a contact sport. We believe in learning through doing—using real-world datasets to test theoretical models. By balancing deep calculus proofs with hands-on exploration in R and JMP, we transform students from passive consumers of data into active investigators who can find truth in the noise of a messy world.
+                        </p>
+
+                        <div class="pt-6 border-t border-white/10">
+                            <blockquote class="text-sm text-stone-200">
+                                "Statistical thinking will one day be as necessary for effective citizenship as the ability to read and write."
+                                <cite class="block mt-2 font-bold text-white text-xs not-italic">— H.G. Wells</cite>
+                            </blockquote>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <section class="mt-16 bg-white rounded-2xl shadow-md border border-stone-200 p-8">
+            <div class="border-b border-stone-200 pb-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <h3 class="text-2xl font-bold text-[#154734]">Course Policies & PSU Student Resources</h3>
+                    <p class="text-xs text-stone-500 font-medium mt-1">General academic guidelines, campus support services, and emergency contacts</p>
+                </div>
+                <span class="text-[10px] bg-[#f4f8ef] text-[#154734] font-bold px-3 py-1.5 rounded-full border border-[#6B9E28]/40 self-start sm:self-auto uppercase tracking-wider">Expandable Reference</span>
+            </div>
+
+            <div class="space-y-4" id="policies-accordion">
+                
+                <!-- Accordion Item 1: Attendance & Make-Up Policies -->
+                <div class="border border-stone-200 rounded-xl overflow-hidden">
+                    <button class="accordion-toggle w-full p-5 text-left bg-stone-50 hover:bg-stone-100 flex items-center justify-between font-bold text-sm text-[#154734] transition-colors">
+                        <span class="flex items-center gap-3">
+                            <span class="w-2.5 h-2.5 rounded-full bg-[#6B9E28]"></span>
+                            Course Attendance, Make-Up & Flexibility Policies
+                        </span>
+                        <span class="accordion-icon text-xl text-stone-400">＋</span>
+                    </button>
+                    <div class="accordion-content px-6 text-xs leading-relaxed text-stone-700 space-y-3">
+                        <div class="pt-4 pb-4 border-t border-stone-100">
+                            <p class="font-semibold text-stone-900 mb-2">Attendance & Absence Guidance:</p>
+                            <p class="mb-2">Regular attendance is expected as it will help you learn the material and perform better on course assessments. However, there will not be any formal taking of attendance beyond the first week and <strong>no doctor's notes are needed</strong> to return to class should you miss for illness. You will be responsible for the day's material whether you attend or not.</p>
+                            
+                            <p class="font-semibold text-stone-900 mt-4 mb-2">Flexibility Statement:</p>
+                            <p class="mb-2">The instructor reserves the right to modify course schedule, content, and/or substitute assignments and learning activities in response to institutional, weather, or class situations.</p>
+                            
+                            <div class="bg-[#f4f8ef] p-4 rounded-lg border-l-4 border-[#6B9E28] mt-4">
+                                <p class="font-bold text-[#154734] mb-1">A Personal Note from Dr. Freier:</p>
+                                <p class="text-stone-700">If you are struggling, please come talk to me sooner rather than later. When in my office (FMH 464S), my door is almost always literally open for you to stop and talk. If the door is closed but the light is on, just knock. If there are any additional supports I can offer to help you succeed in learning the material, let me know!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion Item 2: Academic Integrity, Incompletes & Registrar Deadlines -->
+                <div class="border border-stone-200 rounded-xl overflow-hidden">
+                    <button class="accordion-toggle w-full p-5 text-left bg-stone-50 hover:bg-stone-100 flex items-center justify-between font-bold text-sm text-[#154734] transition-colors">
+                        <span class="flex items-center gap-3">
+                            <span class="w-2.5 h-2.5 rounded-full bg-[#154734]"></span>
+                            Academic Integrity, Incompletes & Registrar Drop/Refund Deadlines
+                        </span>
+                        <span class="accordion-icon text-xl text-stone-400">＋</span>
+                    </button>
+                    <div class="accordion-content px-6 text-xs leading-relaxed text-stone-700 space-y-3">
+                        <div class="pt-4 pb-4 border-t border-stone-100">
+                            <p class="font-semibold text-stone-900 mb-1">Academic Integrity:</p>
+                            <p class="mb-3">Academic integrity is a vital part of the educational experience at PSU. The Student Code of Conduct is the university's policy on academic dishonesty. A confirmed violation of that code in this course may result in failure of the course. <em>It will also disappoint Professor Freier and make her both sad and angry as she tends to take it personally.</em></p>
+
+                            <p class="font-semibold text-stone-900 mt-4 mb-1">Incomplete Grades Policy:</p>
+                            <p class="mb-2">Students do not have a right to receive or demand an Incomplete grade. The option of assigning an Incomplete grade is at the discretion of the instructor when these criteria are met:</p>
+                            <ul class="list-disc pl-5 space-y-1 mb-3">
+                                <li>Required satisfactory course completion/participation</li>
+                                <li>Reasonable justification for the request</li>
+                                <li>Not sought as a substitute for a poor grade</li>
+                                <li>Presence of a written agreement (such as the Incomplete Contract)</li>
+                                <li>A plan in place to resolve Incomplete status</li>
+                            </ul>
+                            
+                            <p class="font-semibold text-stone-900 mt-4 mb-2">PSU Academic Drop, Withdrawal & Refund Schedule (Fall 2026):</p>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-stone-600 border border-stone-200 rounded-lg">
+                                    <thead class="bg-stone-100 text-[11px] uppercase font-bold text-stone-700">
+                                        <tr>
+                                            <th class="p-2.5 border-b">Action / Refund Status</th>
+                                            <th class="p-2.5 border-b">Standard Term Benchmark</th>
+                                            <th class="p-2.5 border-b">Fall 2026 Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-stone-200">
+                                        <tr class="bg-emerald-50/50">
+                                            <td class="p-2.5 font-bold text-[#154734]">100% Tuition Refund (Drop)</td>
+                                            <td class="p-2.5">End of Week 1</td>
+                                            <td class="p-2.5 font-bold text-[#154734]">Sunday, Oct 4, 2026</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2.5 font-bold text-stone-800">70% Tuition Refund (Drop without 'W')</td>
+                                            <td class="p-2.5">End of Week 2</td>
+                                            <td class="p-2.5 font-bold text-stone-800">Sunday, Oct 11, 2026</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2.5">40% Tuition Refund (Withdraw with 'W')</td>
+                                            <td class="p-2.5">End of Week 3</td>
+                                            <td class="p-2.5 font-bold text-stone-700">Sunday, Oct 18, 2026</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2.5">20% Tuition Refund (Withdraw with 'W')</td>
+                                            <td class="p-2.5">End of Week 4</td>
+                                            <td class="p-2.5 font-bold text-stone-700">Sunday, Oct 25, 2026</td>
+                                        </tr>
+                                        <tr class="bg-amber-50/30">
+                                            <td class="p-2.5 font-bold text-amber-900">Last day to withdraw with 'W' or change grading option (0% refund)</td>
+                                            <td class="p-2.5 font-medium text-amber-800">End of Week 7</td>
+                                            <td class="p-2.5 font-bold text-amber-900">Sunday, Nov 15, 2026</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion Item 3: Disability Accommodations -->
+                <div class="border border-stone-200 rounded-xl overflow-hidden">
+                    <button class="accordion-toggle w-full p-5 text-left bg-stone-50 hover:bg-stone-100 flex items-center justify-between font-bold text-sm text-[#154734] transition-colors">
+                        <span class="flex items-center gap-3">
+                            <span class="w-2.5 h-2.5 rounded-full bg-[#6B9E28]"></span>
+                            Disability Access & Accommodations (DRC)
+                        </span>
+                        <span class="accordion-icon text-xl text-stone-400">＋</span>
+                    </button>
+                    <div class="accordion-content px-6 text-xs leading-relaxed text-stone-700 space-y-3">
+                        <div class="pt-4 pb-4 border-t border-stone-100">
+                            <p class="mb-3">PSU values diversity and inclusion; we are committed to fostering mutual respect and full participation for all students. My goal is to create a learning environment that is equitable, useable, inclusive, and welcoming. If any aspects of instruction or course design result in barriers to your inclusion or learning, please notify me.</p>
+                            
+                            <p class="mb-3">The <strong>Disability Resource Center (DRC)</strong> provides reasonable accommodations for students who encounter barriers in the learning environment. If you have, or think you may have, a disability that may affect your work in this class and feel you need accommodations, contact the DRC to schedule an appointment and initiate a conversation about reasonable accommodations.</p>
+                            
+                            <div class="bg-stone-50 p-4 rounded-lg border border-stone-200 space-y-1">
+                                <p class="font-bold text-[#154734]">Disability Resource Center Contact Info:</p>
+                                <p>📍 Location: Smith Memorial Student Union (SMSU), Suite 116 / UCB 400</p>
+                                <p>📞 Phone: <a href="tel:5037254150" class="text-[#6B9E28] font-bold hover:underline">503-725-4150</a></p>
+                                <p>✉ Email: <a href="mailto:drc@pdx.edu" class="text-[#6B9E28] font-bold hover:underline">drc@pdx.edu</a></p>
+                            </div>
+
+                            <p class="mt-3 text-stone-600">If you already have approved accommodations, please contact Dr. Freier to make sure that she has received a faculty notification letter and discuss your accommodations.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion Item 4: Basic Needs & Student Wellness -->
+                <div class="border border-stone-200 rounded-xl overflow-hidden">
+                    <button class="accordion-toggle w-full p-5 text-left bg-stone-50 hover:bg-stone-100 flex items-center justify-between font-bold text-sm text-[#154734] transition-colors">
+                        <span class="flex items-center gap-3">
+                            <span class="w-2.5 h-2.5 rounded-full bg-[#154734]"></span>
+                            Basic Needs, Food Pantry & Student Health (SHAC)
+                        </span>
+                        <span class="accordion-icon text-xl text-stone-400">＋</span>
+                    </button>
+                    <div class="accordion-content px-6 text-xs leading-relaxed text-stone-700 space-y-3">
+                        <div class="pt-4 pb-4 border-t border-stone-100">
+                            <p class="mb-3">It can be challenging to do your best in class if you have trouble meeting basic needs like safe shelter, sleep, and nutrition. Resource centers across campus are here to provide assistance, referrals, and support:</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-stone-50 p-3.5 rounded-lg border border-stone-200">
+                                    <p class="font-bold text-[#154734] mb-1">🍞 Portland State Food Pantry</p>
+                                    <p class="text-stone-600">Free food and essential items for all enrolled students.</p>
+                                    <p class="mt-1.5"><a href="https://psufp.com" target="_blank" class="text-[#6B9E28] font-bold hover:underline">psufp.com</a> | ✉ <a href="mailto:pantry@pdx.edu" class="hover:underline">pantry@pdx.edu</a></p>
+                                </div>
+
+                                <div class="bg-stone-50 p-3.5 rounded-lg border border-stone-200">
+                                    <p class="font-bold text-[#154734] mb-1">🏠 Basic Needs Hub</p>
+                                    <p class="text-stone-600">Assistance with housing insecurity, food access, and emergency grants.</p>
+                                    <p class="mt-1.5">✉ <a href="mailto:basicneedshub@pdx.edu" class="text-[#6B9E28] font-bold hover:underline">basicneedshub@pdx.edu</a></p>
+                                </div>
+
+                                <div class="bg-stone-50 p-3.5 rounded-lg border border-stone-200">
+                                    <p class="font-bold text-[#154734] mb-1">💙 C.A.R.E. Program / PSU CARES</p>
+                                    <p class="text-stone-600">Support for students experiencing distress or personal hardship.</p>
+                                    <p class="mt-1.5">📞 <a href="tel:5037254422" class="font-bold">503-725-4422</a> | ✉ <a href="mailto:askdos@pdx.edu" class="text-[#6B9E28] font-bold hover:underline">askdos@pdx.edu</a></p>
+                                </div>
+
+                                <div class="bg-stone-50 p-3.5 rounded-lg border border-stone-200">
+                                    <p class="font-bold text-[#154734] mb-1">🏥 Center for Student Health & Counseling (SHAC)</p>
+                                    <p class="text-stone-600">Medical care, mental health counseling, and health services.</p>
+                                    <p class="mt-1.5">📍 1880 SW 6th Ave #200 | 📞 <a href="tel:5037252800" class="font-bold">503-725-2800</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion Item 5: Title IX, Equity & Cultural Centers -->
+                <div class="border border-stone-200 rounded-xl overflow-hidden">
+                    <button class="accordion-toggle w-full p-5 text-left bg-stone-50 hover:bg-stone-100 flex items-center justify-between font-bold text-sm text-[#154734] transition-colors">
+                        <span class="flex items-center gap-3">
+                            <span class="w-2.5 h-2.5 rounded-full bg-[#6B9E28]"></span>
+                            Title IX, Equity, Bias Reporting & Cultural Resource Centers
+                        </span>
+                        <span class="accordion-icon text-xl text-stone-400">＋</span>
+                    </button>
+                    <div class="accordion-content px-6 text-xs leading-relaxed text-stone-700 space-y-3">
+                        <div class="pt-4 pb-4 border-t border-stone-100">
+                            <p class="font-semibold text-stone-900 mb-1">Title IX Reporting & Confidential Support:</p>
+                            <p class="mb-2">PSU policies require instructors to report any instance of sexual harassment, sexual and relationship violence, and/or other forms of prohibited discrimination to university officials. If you prefer to speak with a <strong>confidential campus resource</strong> who does not have reporting duties:</p>
+                            <ul class="list-disc pl-5 space-y-1 mb-4">
+                                <li><strong>Confidential Advocates:</strong> Call/Text <a href="tel:5038947982" class="text-[#6B9E28] font-bold hover:underline">503-894-7982</a></li>
+                                <li><strong>SHAC Counseling:</strong> Call <a href="tel:5037252800" class="font-bold">503-725-2800</a></li>
+                            </ul>
+
+                            <p class="font-semibold text-stone-900 border-t border-stone-100 pt-3 mb-1">Discrimination, Bias Incidents & Religious Accommodations:</p>
+                            <p class="mb-3">The <strong>Office of Equity and Compliance (OEC)</strong> and the <strong>Bias Review Team (BRT)</strong> gather reports and support individuals experiencing bias or discrimination. For religious accommodations (e.g., extensions or class flexibility for religious observances), please notify Dr. Freier or contact the Dean of Student Life (<a href="mailto:askdos@pdx.edu" class="text-[#6B9E28] hover:underline">askdos@pdx.edu</a>).</p>
+
+                            <p class="font-semibold text-stone-900 border-t border-stone-100 pt-3 mb-2">Cultural Resource Centers (CRCs):</p>
+                            <p class="mb-2">CRCs create inclusive student environments, offering computer labs, study lounges, leadership opportunities, and programming. All are welcome!</p>
+                            <div class="flex flex-wrap gap-2 text-[11px] font-bold text-[#154734]">
+                                <span class="bg-stone-100 px-3 py-1 rounded-md border">Multicultural Student Center</span>
+                                <span class="bg-stone-100 px-3 py-1 rounded-md border">La Casa Latina</span>
+                                <span class="bg-stone-100 px-3 py-1 rounded-md border">Native American Student & Community Center</span>
+                                <span class="bg-stone-100 px-3 py-1 rounded-md border">Pan African Commons</span>
+                                <span class="bg-stone-100 px-3 py-1 rounded-md border">Pacific Islander, Asian & Asian American Center</span>
+                                <span class="bg-stone-100 px-3 py-1 rounded-md border">MENASA Initiative</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion Item 6: Emergency Contacts -->
+                <div class="border border-stone-200 rounded-xl overflow-hidden">
+                    <button class="accordion-toggle w-full p-5 text-left bg-stone-50 hover:bg-stone-100 flex items-center justify-between font-bold text-sm text-[#154734] transition-colors">
+                        <span class="flex items-center gap-3">
+                            <span class="w-2.5 h-2.5 rounded-full bg-red-600"></span>
+                            Campus Emergency Contacts & Public Safety
+                        </span>
+                        <span class="accordion-icon text-xl text-stone-400">＋</span>
+                    </button>
+                    <div class="accordion-content px-6 text-xs leading-relaxed text-stone-700 space-y-3">
+                        <div class="pt-4 pb-4 border-t border-stone-100 space-y-3">
+                            <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-600 flex justify-between items-center">
+                                <div>
+                                    <p class="font-bold text-red-900">Immediate Threat to Life, Safety, Medical or Fire Emergency</p>
+                                    <p class="text-red-700 text-[11px]">Campus Public Safety Office (CPSO) Emergency Line</p>
+                                </div>
+                                <span class="font-black text-lg text-red-700">9-1-1 or 503-725-5911</span>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="bg-stone-50 p-3 rounded-lg border border-stone-200">
+                                    <p class="font-bold text-stone-800">CPSO Non-Emergency Line</p>
+                                    <p class="text-stone-500 text-[11px]">Vandalism, access control, suspicious activity</p>
+                                    <p class="font-bold text-[#154734] mt-1">📞 503-725-4407</p>
+                                </div>
+                                <div class="bg-stone-50 p-3 rounded-lg border border-stone-200">
+                                    <p class="font-bold text-stone-800">PSU CARES / Student Life Referral</p>
+                                    <p class="text-stone-500 text-[11px]">Connects distressed students with campus support</p>
+                                    <p class="font-bold text-[#154734] mt-1">📞 503-725-4422 | askdos@pdx.edu</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <footer class="mt-20 pt-10 border-t border-stone-200 text-center text-[#154734]">
+            <p class="text-xs font-bold tracking-[0.2em] uppercase mb-2">Portland State University • Fariborz Maseeh Hall</p>
+            <p class="text-[10px] text-stone-400 font-medium tracking-wide">© 2026 Student Learning Dashboard for Stat 361: Statistical Methods I. For Educational Use Only.</p>
+        </footer>
+    </div>
+
+    <script>
+        const courseSLOs = [
+            { num: 1, text: "Be comfortable with basic probability rules, concepts, and operations, including combination/permutation counting and conditional probability." },
+            { num: 2, text: "Clearly describe observed variables using common measures of center and spread." },
+            { num: 3, text: "Understand the concept of Random Variables and how to interpret a Probability Density Function (PDF) and Cumulative Distribution Function (CDF)." },
+            { num: 4, text: "Be familiar with a handful of named discrete and continuous distributions (including Binomial, Negative Binomial, Poisson, Exponential, Uniform, Student’s t, and Normal) and be able to recognize when each applies in real-world scenarios." },
+            { num: 5, text: "Have a firm, conceptual understanding of sampling variability, sampling distributions, and the Central Limit Theorem (CLT)." },
+            { num: 6, text: "Create, perform, and communicate results from one-sample tests of means and proportions, including checking related assumptions and calculating power." },
+            { num: 7, text: "Create and accurately interpret confidence intervals on single means and proportions using both classical formulas and empirical bootstrapping." },
+            { num: 8, text: "Gain a strong conceptual understanding of inference procedures through hands-on simulation activities." },
+            { num: 9, text: "Prepare professional summaries of statistical data sets and communicate knowledge from statistical analysis to professionals in multiple disciplines via a visual poster presentation." },
+            { num: 10, text: "Have experience doing statistical work and modeling using statistical software (R & JMP)." }
+        ];
+
+        const syllabusData = [
+            {
+                week: 1,
+                dates: "Sep 28 – Oct 2, 2026",
+                title: "Data Architecture & Summaries",
+                spiegel: "Introduction & Chapter 2: Summarizing and Communicating Numbers",
+                oer: "IMS: Ch. 1 & Ch. 5 (§§5.1–5.6); Su: Ch. 2 (§§2.1–2.6); Eusea: Ch. 2 (§§2.1–2.7)",
+                oerAuthors: "IMS, Su, & Eusea",
+                questions: [
+                    "How can two datasets with the same average tell opposite stories?",
+                    "What makes a data visualization 'honest' vs. 'misleading'?",
+                    "How do we mathematically prove that the mean minimizes squared error (L2 loss) while the median minimizes absolute error (L1 loss)?"
+                ],
+                objectives: ["SLO 2", "SLO 9", "SLO 10"],
+                math: "Calculus proofs showing sample mean (x̄) minimizes sum of squared errors, sample median minimizes sum of absolute errors, and Bessel's n-1 correction.",
+                focus: [9, 4, 7] 
+            },
+            {
+                week: 2,
+                dates: "Oct 5 – Oct 9, 2026",
+                title: "Calculus & Density Functions",
+                spiegel: "Chapter 3: Populations and Measurement",
+                oer: "IMS: Ch. 2 (§§2.1–2.3); Su: Ch. 4 (§§4.1–4.4) & Ch. 5 (§5.1); Eusea: Ch. 4 (§§4.1–4.2) & Ch. 5 (§5.1)",
+                oerAuthors: "IMS, Su, & Eusea",
+                questions: [
+                    "How do we transition from jagged histograms to smooth population densities?",
+                    "How can calculus help us determine the likelihood of a variable falling in a specific range?",
+                    "What is the physical and geometric meaning of an integral under a probability curve?"
+                ],
+                objectives: ["SLO 3"],
+                math: "Integration of continuous PDFs f(x), calculation of CDF F(x) = ∫f(t)dt, Expectation E[X] = ∫x f(x)dx, and Variance Var(X) = ∫(x-μ)²f(x)dx.",
+                focus: [5, 10, 5]
+            },
+            {
+                week: 3,
+                dates: "Oct 12 – Oct 16, 2026",
+                title: "Probability & Uncertainty",
+                spiegel: "Chapter 8: Probability—the Language of Uncertainty",
+                oer: "IMS: Ch. 4 (§§4.1–4.3) & Ch. 11 (§§11.1–11.3); Su: Ch. 3 (§§3.1–3.9); Watts: Ch. 3 (§§3.1–3.7)",
+                oerAuthors: "IMS, Su, & Watts",
+                questions: [
+                    "If a medical diagnostic test is 99% accurate, why is a positive result often likely a false positive?",
+                    "How do we update our beliefs as new evidence arrives using natural frequency trees?",
+                    "How can we calculate the probability of complex, intersecting events?"
+                ],
+                objectives: ["SLO 1", "SLO 8"],
+                math: "Axiomatic set theory, Bayes' Theorem derivation, and Combinatorial proofs for P(n,k) and C(n,k).",
+                focus: [8, 8, 4]
+            },
+            {
+                week: 4,
+                dates: "Oct 19 – Oct 23, 2026",
+                title: "Theoretical Distribution Models",
+                spiegel: "Chapter 9 (Part 1): Named Models",
+                oer: "IMS: Ch. 13 (§13.2 Normal Distribution); Su: Ch. 4 (§4.5) & Ch. 5 (§§5.2–5.5); Eusea: Ch. 4 (§4.3, §4.6) & Ch. 6 (§§6.1–6.2)",
+                oerAuthors: "IMS, Su, & Eusea",
+                questions: [
+                    "When does data naturally follow a bell curve versus a skewed power law?",
+                    "How do we model rare events like system crashes or customer arrivals?",
+                    "Which mathematical distribution best fits the architecture of my dataset?"
+                ],
+                objectives: ["SLO 4", "SLO 10"],
+                math: "Moment Generating Functions (MGFs), and parameter derivations of Binomial, Poisson, Exponential, and Normal distributions.",
+                focus: [7, 9, 6]
+            },
+            {
+                week: 5,
+                dates: "Oct 26 – Oct 30, 2026",
+                title: "Sampling Variability & CLT",
+                eventNote: "Midterm Exam: Wednesday, October 28 (In-Class)",
+                spiegel: "Chapter 9 (Part 2): Central Limit Theorem",
+                oer: "IMS: Ch. 13 (§13.1 CLT, §13.3 Sampling); Su: Ch. 6 (§§6.1–6.3); Russell: Ch. 6 (§§6.1–6.2)",
+                oerAuthors: "IMS, Su, & Russell",
+                questions: [
+                    "Why does the average of any dataset eventually follow a normal curve as sample size grows?",
+                    "How much should we expect our sample average to vary from the population truth?",
+                    "What happens to our precision as we increase our sample size?"
+                ],
+                objectives: ["SLO 5", "SLO 8"],
+                math: "Formal statement and proof-sketch of CLT; derivation of Standard Error (σ/√n) and variance of sample mean.",
+                focus: [6, 10, 7]
+            },
+            {
+                week: 6,
+                dates: "Nov 2 – Nov 6, 2026",
+                title: "Resampling & Bootstrapping",
+                spiegel: "Chapter 7: Estimates and Intervals",
+                oer: "IMS: Ch. 12 (§§12.1–12.5 Bootstrapping); Russell: Ch. 6 (§§6.3–6.4)",
+                oerAuthors: "IMS & Russell",
+                questions: [
+                    "Can we calculate uncertainty without assuming a rigid mathematical formula?",
+                    "How can computer simulation replace traditional calculus in messy real-world data?",
+                    "How sure can we be about our estimate when we only have one sample?"
+                ],
+                objectives: ["SLO 7", "SLO 8", "SLO 10"],
+                math: "The Empirical Distribution Function (EDF) and the mathematics of the 'Plug-In' principle in R & JMP.",
+                focus: [9, 5, 10]
+            },
+            {
+                week: 7,
+                dates: "Nov 9 – Nov 13, 2026",
+                title: "Hypothesis Testing Logic",
+                spiegel: "Chapter 10: Answering Questions",
+                oer: "IMS: Ch. 11 & Ch. 19 (§§19.1–19.4); Su: Ch. 7 (§§7.1–7.2) & Ch. 8 (§§8.1–8.5); Eusea: Ch. 7 & Ch. 8",
+                oerAuthors: "IMS, Su, & Eusea",
+                questions: [
+                    "Is a discovery 'real' or could it just be a lucky accident of random noise?",
+                    "What does a p-value actually measure (and what does it not)?",
+                    "How do we set a rigorous standard for claiming a discovery in science?"
+                ],
+                objectives: ["SLO 6", "SLO 7"],
+                math: "Derivation of the t-statistic (t = (x̄ - μ₀) / (s/√n)) and the integration of tail areas for p-value calculation.",
+                focus: [7, 8, 8]
+            },
+            {
+                week: 8,
+                dates: "Nov 16 – Nov 20, 2026",
+                title: "Power & Decision Errors",
+                spiegel: "Chapter 1 & 10 (Review): Decision Errors & Risk Communication",
+                oer: "IMS: Ch. 14 (§§14.1–14.6) & Ch. 16 (§§16.1–16.4); Su: Ch. 10 (§§10.1–10.5); Watts: Ch. 7 (§7.4) & Ch. 8 (§8.8)",
+                oerAuthors: "IMS, Su, & Watts",
+                questions: [
+                    "What is the risk of missing a real discovery (Type II error)?",
+                    "How large must a sample be to have 'power' to detect a small effect size?",
+                    "How does absolute risk differ from relative risk in media health reports?"
+                ],
+                objectives: ["SLO 6", "SLO 8", "SLO 10"],
+                math: "The math of Alpha (α), Beta (β), and the Power Function (1-β). One-proportion z-tests.",
+                focus: [9, 7, 7]
+            },
+            {
+                week: 9,
+                dates: "Nov 23 – Nov 27, 2026",
+                title: "Ethics & Scientific Integrity",
+                spiegel: "Chapters 11 & 12: Bad Incentives",
+                oer: "IMS: Ch. 2 (§§2.2–2.3) & Ch. 14 (§14.3); Eusea: Ch. 1 (§1.4); Watts: Ch. 1 (§1.5)",
+                oerAuthors: "IMS, Eusea, & Watts",
+                questions: [
+                    "How can 'p-hacking' turn random noise into fake published research?",
+                    "Why are most published research findings potentially false?",
+                    "How do we correct our math when testing many hypotheses simultaneously?"
+                ],
+                objectives: ["SLO 8", "SLO 9", "SLO 10"],
+                math: "Multiple testing corrections: The Bonferroni inequality (α_adj = α/k) and Sidak inequalities.",
+                focus: [10, 5, 5]
+            },
+            {
+                week: 10,
+                dates: "Nov 30 – Dec 4, 2026",
+                title: "Data Storytelling & Poster Presentations",
+                spiegel: "Chapters 13 & 14: Doing Statistics Better",
+                oer: "IMS: Ch. 6 (§§6.1–6.3); Su (Optional): Ch. 13 (§§13.1–13.5)",
+                oerAuthors: "IMS & Su",
+                questions: [
+                    "How do we communicate complex statistical uncertainty to a non-technical audience?",
+                    "What is the most honest way to visualize a confidence interval in a research poster?",
+                    "How can we ensure our data science conclusions drive better human decisions?"
+                ],
+                objectives: ["SLO 9", "SLO 10"],
+                math: "Log-scale transformations, visualization geometry of uncertainty bounds, and poster presentation synthesis.",
+                focus: [8, 4, 10]
+            }
+        ];
+
+        let currentWeek = 1;
+        let focusChart;
+
+        function renderSLOMasterKey() {
+            const grid = document.getElementById('slo-master-grid');
+            grid.innerHTML = courseSLOs.map(slo => `
+                <div class="bg-white p-4 rounded-xl border border-stone-200 shadow-sm flex items-start gap-3">
+                    <span class="bg-[#154734] text-white text-xs font-bold px-2.5 py-1 rounded-md shrink-0">SLO ${slo.num}</span>
+                    <p class="text-stone-700 text-xs leading-relaxed font-medium">${slo.text}</p>
+                </div>
+            `).join('');
+        }
+
+        function initNav() {
+            const nav = document.getElementById('week-nav');
+            syllabusData.forEach(item => {
+                const tab = document.createElement('div');
+                tab.className = `week-tab px-6 py-3 flex flex-col items-center ${item.week === currentWeek ? 'active' : ''}`;
+                tab.innerHTML = `
+                    <span class="text-[10px] uppercase font-black text-stone-400 tracking-tighter">Week</span>
+                    <span class="text-xl font-bold">${item.week}</span>
+                `;
+                tab.onclick = () => selectWeek(item.week);
+                nav.appendChild(tab);
+            });
+        }
+
+        function selectWeek(week) {
+            currentWeek = week;
+            
+            document.querySelectorAll('.week-tab').forEach((tab, index) => {
+                if (index + 1 === week) tab.classList.add('active');
+                else tab.classList.remove('active');
+            });
+
+            const data = syllabusData.find(d => d.week === week);
+            
+            const panel = document.getElementById('details-panel');
+            panel.classList.remove('fade-in');
+            void panel.offsetWidth; 
+            panel.classList.add('fade-in');
+
+            document.getElementById('display-week').textContent = `Week ${data.week}`;
+            document.getElementById('display-dates').textContent = data.dates;
+            document.getElementById('display-title').textContent = data.title;
+            
+            const eventBanner = document.getElementById('event-banner');
+            if (data.eventNote) {
+                document.getElementById('display-event-note').textContent = data.eventNote;
+                eventBanner.classList.remove('hidden');
+            } else {
+                eventBanner.classList.add('hidden');
+            }
+
+            document.getElementById('read-spiegel').textContent = data.spiegel;
+            document.getElementById('read-oer').textContent = data.oer;
+            document.getElementById('read-oer-authors').textContent = data.oerAuthors;
+            document.getElementById('math-box').textContent = data.math;
+
+            const qList = document.getElementById('questions-list');
+            qList.innerHTML = data.questions.map(q => `
+                <div class="flex items-start gap-2">
+                    <span class="text-[#154734] mt-1">▹</span>
+                    <span>${q}</span>
+                </div>
+            `).join('');
+
+            const objTags = document.getElementById('objectives-tags');
+            objTags.innerHTML = data.objectives.map(obj => `<span class="objective-tag">${obj}</span>`).join('');
+
+            updateChart(data.focus);
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('focusChart').getContext('2d');
+            focusChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Intuition', 'Math/Proof', 'Applied Skills'],
+                    datasets: [{
+                        label: 'Weight',
+                        data: [9, 4, 7],
+                        backgroundColor: 'rgba(21, 71, 52, 0.2)',
+                        borderColor: 'rgba(21, 71, 52, 1)',
+                        pointBackgroundColor: '#154734',
+                        borderWidth: 3,
+                        pointRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 10,
+                            ticks: { display: false, stepSize: 2 },
+                            grid: { color: '#e5e7eb' },
+                            angleLines: { color: '#e5e7eb' },
+                            pointLabels: {
+                                font: {
+                                    size: 11,
+                                    weight: 'bold'
+                                },
+                                color: '#154734'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function updateChart(newData) {
+            focusChart.data.datasets[0].data = newData;
+            focusChart.update();
+        }
+
+        function initAccordions() {
+            const toggles = document.querySelectorAll('.accordion-toggle');
+            toggles.forEach(toggle => {
+                toggle.addEventListener('click', () => {
+                    const content = toggle.nextElementSibling;
+                    const icon = toggle.querySelector('.accordion-icon');
+                    const isOpen = content.classList.contains('open');
+
+                    if (isOpen) {
+                        content.classList.remove('open');
+                        icon.textContent = '＋';
+                    } else {
+                        content.classList.add('open');
+                        icon.textContent = '－';
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSLOMasterKey();
+            initNav();
+            initChart();
+            initAccordions();
+            selectWeek(1);
+        });
+    </script>
+</body>
+</html>
