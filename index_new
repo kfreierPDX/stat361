@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STAT 361: Introduction to Statistical Methods | Portland State University</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Public Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"Roboto Mono"', 'monospace'],
+          },
+          colors: {
+            psu: {
+              50: '#f2f8f4',
+              100: '#e1eee5',
+              200: '#c3ddcb',
+              300: '#96c4a5',
+              400: '#64a37b',
+              500: '#3e8457',
+              600: '#2d6a43',
+              700: '#154734', // Official PSU Forest Green
+              800: '#113a2b',
+              900: '#0c2a20',
+              accent: '#6cab36', // Vibrant PSU Leaf Accent
+              light: '#f7faf8'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    
+    /* Table Styling */
+    .syllabus-table th {
+      background-color: #154734;
+      color: #ffffff;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      padding: 0.85rem 1rem;
+    }
+    .syllabus-table td {
+      padding: 0.95rem 1rem;
+      vertical-align: top;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .syllabus-table tr:hover td {
+      background-color: #f8faf9;
+    }
+    
+    /* Active Week Pill Button */
+    .week-pill-active {
+      background-color: #154734 !important;
+      color: #ffffff !important;
+      border-color: #154734 !important;
+      box-shadow: 0 4px 6px -1px rgba(21, 71, 52, 0.25);
+    }
+
+    /* Print styles */
+    @media print {
+      header, nav, .no-print { display: none !important; }
+      body { background: white; color: black; }
+      .shadow-sm, .shadow-md, .shadow-lg { box-shadow: none !important; border: 1px solid #ccc !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans selection:bg-psu-200 selection:text-psu-900">
+
+  <!-- PSU BRAND TOP BAR -->
+  <div class="bg-psu-900 text-white border-b-2 border-psu-accent py-2 px-4">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
+      <div class="flex items-center gap-3">
+        <span class="font-extrabold tracking-wider uppercase bg-psu-700 text-psu-100 px-2 py-0.5 rounded border border-psu-600">Portland State University</span>
+        <span class="text-slate-300 font-medium">Department of Mathematics & Statistics</span>
+      </div>
+      <div class="flex items-center gap-4 text-slate-300">
+        <span><strong>CRN:</strong> 12926</span>
+        <span>•</span>
+        <span><strong>Credits:</strong> 4</span>
+        <span>•</span>
+        <span><strong>Prerequisite:</strong> MTH 252 (Calculus II)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO TITLE & INSTRUCTOR BAR -->
+  <header class="bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        
+        <div class="space-y-2 max-w-3xl">
+          <div class="inline-flex items-center gap-2 bg-psu-50 text-psu-800 border border-psu-200 text-xs font-semibold px-3 py-1 rounded-full">
+            <span class="w-2 h-2 rounded-full bg-psu-accent"></span>
+            Fall 2026 • Flipped Classroom • Simulation-First Inference
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-psu-900 tracking-tight">
+            STAT 361: Introduction to Statistical Methods
+          </h1>
+          <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+            A calculus-infused introduction to probability logic, continuous and discrete distributions, sampling variability, and modern statistical inference via digital simulation, empirical bootstrapping, and <strong>JMP</strong>.
+          </p>
+        </div>
+
+        <!-- INSTRUCTOR QUICK CONTACT BOX -->
+        <div class="bg-psu-50/70 border border-psu-200 rounded-2xl p-5 min-w-[320px] space-y-3">
+          <div class="flex items-center gap-3 pb-2 border-b border-psu-200">
+            <div class="w-10 h-10 rounded-xl bg-psu-700 text-white font-bold flex items-center justify-center text-sm shadow">
+              KF
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-900 text-sm">Dr. Kate Freier</h3>
+              <p class="text-xs text-slate-600">Instructor • FMH 462A</p>
+              <a href="mailto:kfreier@pdx.edu" class="text-xs font-semibold text-psu-700 hover:text-psu-900 underline">kfreier@pdx.edu</a>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-700 space-y-1.5">
+            <p><strong>Class Meetings:</strong> Mon/Wed 11:00–12:05 (OND 202)</p>
+            <p><strong>Computer Lab:</strong> Friday 11:00–12:05 (FMH B155)</p>
+            <p><strong>Office Hours:</strong> Mon 1:00–2:00 PM (FMH 462A), Tue 11:00 AM–12:00 PM (Zoom), or by appointment.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- STICKY SECTION NAVIGATION -->
+  <nav class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex space-x-1 sm:space-x-8 overflow-x-auto py-2 text-xs sm:text-sm font-semibold text-slate-600">
+        <a href="#schedule-section" class="py-2 px-3 hover:text-psu-700 transition">10-Week Master Table</a>
+        <a href="#deep-dive-section" class="py-2 px-3 text-psu-700 hover:text-psu-900 transition flex items-center gap-1.5 font-bold">
+          <span class="w-2 h-2 rounded-full bg-psu-accent"></span>
+          Visual Week Dashboard
+        </a>
+        <a href="#structure-section" class="py-2 px-3 hover:text-psu-700 transition">Flipped Learning</a>
+        <a href="#assessments-section" class="py-2 px-3 hover:text-psu-700 transition">Grading & Exams</a>
+        <a href="#calculator-section" class="py-2 px-3 hover:text-psu-700 transition">Grade Estimator</a>
+        <a href="#materials-section" class="py-2 px-3 hover:text-psu-700 transition">Texts & Tech</a>
+        <a href="#policies-section" class="py-2 px-3 hover:text-psu-700 transition">PSU Policies</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN BODY -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
+
+    <!-- 10-WEEK MASTER SCHEDULE TABLE (ORIGINAL FULL VIEW) -->
+    <section id="schedule-section" class="space-y-6 scroll-mt-16">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-psu-600">Course Roadmap</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">10-Week Master Schedule</h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">Full schedule view with meeting days, lab topics, and assigned textbook readings.</p>
+        </div>
+        
+        <!-- SEARCH & HIGHLIGHT CONTROLS -->
+        <div class="flex items-center gap-2">
+          <div class="relative">
+            <input type="text" id="schedule-search" onkeyup="filterTable()" placeholder="Search topics, labs, books..." 
+                   class="text-xs px-3 py-2 pl-8 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-psu-600 w-60">
+            <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </div>
+          <button onclick="window.print()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-2 rounded-lg border border-slate-300 flex items-center gap-1 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+            Print
+          </button>
+        </div>
+      </div>
+
+      <!-- MASTER SCHEDULE TABLE -->
+      <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm syllabus-table" id="master-table">
+            <thead>
+              <tr>
+                <th class="w-28">Week & Dates</th>
+                <th class="w-1/4">Monday (OND 202)</th>
+                <th class="w-1/4">Wednesday (OND 202)</th>
+                <th class="w-1/4">Friday JMP Lab (FMH B155)</th>
+                <th class="w-1/5">Spiegelhalter Reading</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 text-slate-700">
+              
+              <!-- WEEK 1 -->
+              <tr class="schedule-row">
+                <td class="font-bold text-psu-800 bg-psu-50/50">
+                  <div class="text-sm font-extrabold">Week 1</div>
+                  <div class="text-[11px] text-slate-500 font-normal">Sep 28 – Oct 2</div>
+                  <span class="inline-block mt-1 bg-psu-100 text-psu-800 text-[10px] px-1.5 py-0.5 rounded font-semibold">Intro</span>
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Day 1 (Sep 28):</strong>
+                  Course Intro; Descriptive Stats & Data Summaries; Tidy data matrices, operationalization, & exploratory forensic analysis.
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Day 2 (Sep 30):</strong>
+                  Measures of Center (Mean/Median balance points), Spread (Variance, SD, IQR), Skewness, & Outlier detection fences.
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Lab 1 (Oct 2):</strong>
+                  Introduction to JMP & Visualizing Data (Distribution platform, histograms, box plots, and summary statistics).
+                </td>
+                <td class="text-xs bg-slate-50/50">
+                  <strong class="text-psu-800 font-semibold block">Intro & Chapter 2</strong>
+                  <em>Summarizing and Communicating Numbers</em>
+                  
+                </td>
+              </tr>
+
+              <!-- WEEK 2 -->
+              <tr class="schedule-row">
+                <td class="font-bold text-psu-800 bg-psu-50/50">
+                  <div class="text-sm font-extrabold">Week 2</div>
+                  <div class="text-[11px] text-slate-500 font-normal">Oct 5 – Oct 9</div>
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Day 3 (Oct 5):</strong>
+                  Introduction to Random Variables; PMFs, PDFs, CDFs; Expected Value $E(X)$ and Variance $	ext{Var}(X)$ properties.
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Day 4 (Oct 7):</strong>
+                  Continuous distributions (Uniform, Normal, Exponential); standard normal standardization ($Z$-score); Empirical Rule.
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Lab 2 (Oct 9):</strong>
+                  Using continuous distributions in JMP; shading areas, calculating quantiles, and assessing normality via Q-Q plots.
+                </td>
+                <td class="text-xs bg-slate-50/50">
+                  <strong class="text-psu-800 font-semibold block">Chapter 3</strong>
+                  <em>Populations and Measurement</em>
+                  
+                </td>
+              </tr>
+
+              <!-- WEEK 3 -->
+              <tr class="schedule-row">
+                <td class="font-bold text-psu-800 bg-psu-50/50">
+                  <div class="text-sm font-extrabold">Week 3</div>
+                  <div class="text-[11px] text-slate-500 font-normal">Oct 12 – Oct 16</div>
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Day 5 (Oct 12):</strong>
+                  Classical Counting Rules, Permutations ($nPr$) & Combinations ($nCr$); sample space partitioning.
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Day 6 (Oct 14):</strong>
+                  Probability Foundations; Complements, Addition Rule, Multiplication Rule, & testing for independence.
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Lab 3 (Oct 16):</strong>
+                  Conditional Probability & Frequency Trees in JMP; contingency tables and medical screening diagnostics.
+                </td>
+                <td class="text-xs bg-slate-50/50">
+                  <strong class="text-psu-800 font-semibold block">Chapter 8</strong>
+                  <em>Probability—the Language of Uncertainty</em>
+                  
+                </td>
+              </tr>
+
+              <!-- WEEK 4 -->
+              <tr class="schedule-row">
+                <td class="font-bold text-psu-800 bg-psu-50/50">
+                  <div class="text-sm font-extrabold">Week 4</div>
+                  <div class="text-[11px] text-slate-500 font-normal">Oct 19 – Oct 23</div>
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Day 7 (Oct 19):</strong>
+                  Discrete Models: Bernoulli Trials, Binomial ($n, p$), and Negative Binomial / Geometric waiting time models.
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Day 8 (Oct 21):</strong>
+                  Discrete Models: Hypergeometric (sampling without replacement) & Poisson counts over intervals ($\mu = \sigma^2 = \lambda$).
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Lab 4 (Oct 23):</strong>
+                  Working with discrete distributions in JMP; probability mass functions and calculator tools.
+                </td>
+                <td class="text-xs bg-amber-50/50">
+                  <span class="text-amber-800 font-bold block">None, textbook reading only</span>
+                  <div class="text-[11px] text-amber-900 mt-1">See Canvas module for reading assignment</div>
+                </td>
+              </tr>
+
+              <!-- WEEK 5 (EXAM 1) -->
+              <tr class="schedule-row bg-psu-50/30">
+                <td class="font-bold text-psu-800 bg-psu-100/60">
+                  <div class="text-sm font-extrabold">Week 5</div>
+                  <div class="text-[11px] text-slate-500 font-normal">Oct 26 – Oct 30</div>
+                  <span class="inline-block mt-1 bg-red-100 text-red-800 text-[10px] px-1.5 py-0.5 rounded font-black">MIDTERM 1</span>
+                </td>
+                <td class="bg-amber-50/30">
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Day 9 (Oct 26):</strong>
+                  Midterm Exam 1 Comprehensive Review (Synthesizing Weeks 1–4, descriptive statistics through discrete distributions).
+                </td>
+                <td class="bg-red-50/50 border-l-2 border-r-2 border-red-200">
+                  <strong class="text-red-900 block font-bold mb-0.5">Day 10 (Oct 28):</strong>
+                  <span class="bg-red-600 text-white font-black text-xs px-2 py-0.5 rounded inline-block mb-1">MIDTERM EXAM 1</span><br>
+                  In-class exam covering Weeks 1–4. Permitted: 1 single-sided 8.5x11 handwritten formula sheet & calculator.
+                </td>
+                <td class="bg-emerald-50/40">
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Lab 5 (Oct 30):</strong>
+                  Visualizing Sampling Variability & Central Limit Theorem (CLT) live interactive simulation in JMP.
+                </td>
+                <td class="text-xs bg-slate-50/50">
+                  <strong class="text-psu-800 font-semibold block">Chapter 9</strong>
+                  <em>Putting Prob & Stats Together</em>
+                  
+                </td>
+              </tr>
+
+              <!-- WEEK 6 -->
+              <tr class="schedule-row">
+                <td class="font-bold text-psu-800 bg-psu-50/50">
+                  <div class="text-sm font-extrabold">Week 6</div>
+                  <div class="text-[11px] text-slate-500 font-normal">Nov 2 – Nov 6</div>
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Day 11 (Nov 2):</strong>
+                  Sampling distributions and the logic of empirical bootstrapping (resampling with replacement from observed data).
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Day 12 (Nov 4):</strong>
+                  Constructing Confidence Intervals via Bootstrapping (Percentile method vs. Standard Error method); interpreting uncertainty.
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Lab 6 (Nov 6):</strong>
+                  Bootstrapping in JMP; running 1,000 resamples to estimate parameters and construct empirical confidence intervals.
+                </td>
+                <td class="text-xs bg-slate-50/50">
+                  <strong class="text-psu-800 font-semibold block">Chapter 7</strong>
+                  <em>How Sure Can We Be? Estimates and Intervals</em>
+                  
+                </td>
+              </tr>
+
+              <!-- WEEK 7 -->
+              <tr class="schedule-row">
+                <td class="font-bold text-psu-800 bg-psu-50/50">
+                  <div class="text-sm font-extrabold">Week 7</div>
+                  <div class="text-[11px] text-slate-500 font-normal">Nov 9 – Nov 13</div>
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Day 13 (Nov 9):</strong>
+                  Bootstrapping decision making; formulating null models, test statistics, and empirical $p$-values via simulation.
+                </td>
+                <td class="bg-slate-100 text-slate-500">
+                  <strong class="text-slate-700 block font-semibold mb-0.5">Nov 11 (Wed):</strong>
+                  <span class="font-bold uppercase text-xs text-slate-600">Veteran’s Day Holiday</span><br>
+                  No class held. PSU campus offices closed.
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Lab 7 (Nov 13):</strong>
+                  Bootstrapping CIs and tests in JMP; permutation testing and evaluating statistical discernibility without normal assumptions.
+                </td>
+                <td class="text-xs bg-slate-50/50">
+                  <strong class="text-psu-800 font-semibold block">Chapter 10</strong>
+                  <em>Answering Questions and Claiming Discoveries</em>
+                </td>
+              </tr>
+
+              <!-- WEEK 8 -->
+              <tr class="schedule-row">
+                <td class="font-bold text-psu-800 bg-psu-50/50">
+                  <div class="text-sm font-extrabold">Week 8</div>
+                  <div class="text-[11px] text-slate-500 font-normal">Nov 16 – Nov 20</div>
+                  <span class="inline-block mt-1 bg-purple-100 text-purple-800 text-[10px] px-1.5 py-0.5 rounded font-bold">Poster Specs</span>
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Day 15 (Nov 16):</strong>
+                  Theory-based hypothesis testing: One-sample Student's $t$-test for means; checking normality assumptions; One-proportion $z$-test.
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Day 16 (Nov 18):</strong>
+                  Theory-based confidence intervals ($t$-intervals for $\mu$, 1-prop $z$-intervals); Margin of error and sample size planning.
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Lab 8 (Nov 20):</strong>
+                  One-Sample Inference in JMP; comparing theoretical parametric results against bootstrap intervals.
+                </td>
+                <td class="text-xs bg-amber-50/50">
+                  <span class="text-amber-800 font-bold block">None, textbook reading only</span>
+                  <div class="text-[11px] text-slate-600 mt-1"><strong>Final project details provided!</strong> (See Canvas module for reading)</div>
+                </td>
+              </tr>
+
+              <!-- WEEK 9 -->
+              <tr class="schedule-row">
+                <td class="font-bold text-psu-800 bg-psu-50/50">
+                  <div class="text-sm font-extrabold">Week 9</div>
+                  <div class="text-[11px] text-slate-500 font-normal">Nov 23 – Nov 27</div>
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Day 17 (Nov 23):</strong>
+                  Model Assumptions, Systematic Biases, $p$-Hacking, HARKing, publication pressure, and the Scientific Replication Crisis.
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Day 18 (Nov 25):</strong>
+                  Poster Workshop: Data Analysis, Visual Honesty, and Scientific Communication in OND 202. <em>(Lab 8 due by 11am).</em>
+                </td>
+                <td class="bg-slate-100 text-slate-500">
+                  <strong class="text-slate-700 block font-semibold mb-0.5">Nov 27 (Fri):</strong>
+                  <span class="font-bold uppercase text-xs text-slate-600">Thanksgiving Holiday</span><br>
+                  No class or lab held. Enjoy your break!
+                </td>
+                <td class="text-xs bg-slate-50/50">
+                  <strong class="text-psu-800 font-semibold block">Chapters 12 & 13</strong>
+                  <em>How Things Go Wrong & Doing Statistics Better</em>
+                </td>
+              </tr>
+
+              <!-- WEEK 10 (EXAM 2) -->
+              <tr class="schedule-row bg-psu-50/30">
+                <td class="font-bold text-psu-800 bg-psu-100/60">
+                  <div class="text-sm font-extrabold">Week 10</div>
+                  <div class="text-[11px] text-slate-500 font-normal">Nov 30 – Dec 4</div>
+                  <span class="inline-block mt-1 bg-red-100 text-red-800 text-[10px] px-1.5 py-0.5 rounded font-black">EXAM 2</span>
+                </td>
+                <td>
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Day 19 (Nov 30):</strong>
+                  Project Peer Review: sharing preliminary drafts, verifying interpretation, and polishing poster design.
+                </td>
+                <td class="bg-amber-50/30">
+                  <strong class="text-slate-900 block font-semibold mb-0.5">Day 20 (Dec 2):</strong>
+                  Comprehensive Review for Exam 2 (Focusing on Weeks 5–10: CLT, Bootstrapping, Tests, CIs, and Replication).
+                </td>
+                <td class="bg-red-50/50 border-l-2 border-r-2 border-red-200">
+                  <strong class="text-red-900 block font-bold mb-0.5">Day 21 (Dec 4):</strong>
+                  <span class="bg-red-600 text-white font-black text-xs px-2 py-0.5 rounded inline-block mb-1">EXAM 2 (IN-CLASS)</span><br>
+                  In-class exam focusing on Weeks 5–10. Permitted: 1 double-sided handwritten note sheet & calculator.
+                </td>
+                <td class="text-xs bg-slate-50/50">
+                  <strong class="text-psu-800 font-semibold block">Chapter 14</strong>
+                  <em>In Conclusion</em>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+        <!-- FINAL POSTER SESSION FOOTER BANNER -->
+        <div class="p-5 bg-gradient-to-r from-psu-700 to-psu-800 text-white flex flex-col md:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-psu-accent text-psu-900 flex items-center justify-center font-bold text-lg">
+              ★
+            </div>
+            <div>
+              <h4 class="font-bold text-base text-white">Final Project Poster Session (Registrar Final Exam Slot)</h4>
+              <p class="text-xs text-psu-100">Wednesday, December 9, 2026 • 11:10 AM – 1:00 PM • Attendance Required</p>
+            </div>
+          </div>
+          <div class="text-xs bg-white/10 px-3 py-1.5 rounded-lg border border-white/20">
+            <strong>Weight:</strong> 15% of Course Grade • Real Data Analysis & Public Presentation
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEW HIGH-IMPACT VISUAL WEEKLY DASHBOARD (DEEP DIVE) -->
+    <section id="deep-dive-section" class="space-y-6 scroll-mt-16">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-psu-600">Visual Week-by-Week Dashboard</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Cognitive Rigor & Learning Objectives</h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">Select any week to inspect its visual cognitive load profile, active learning goals, and pedagogical safety shields.</p>
+        </div>
+      </div>
+
+      <!-- INTERACTIVE PILL BAR -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200 no-print" id="week-pill-bar">
+        <!-- Injected via JavaScript for Weeks 1 to 10 -->
+      </div>
+
+      <!-- VISUAL DASHBOARD CARD -->
+      <div id="visual-card" class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm transition-all space-y-6">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+    </section>
+
+    <!-- GENERAL COURSE STRUCTURE & FLIPPED FORMAT -->
+    <section id="structure-section" class="space-y-6 scroll-mt-16">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-wider text-psu-600">Pedagogical Framework</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">General Course Structure</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-3">
+          <h3 class="text-lg font-bold text-psu-800 flex items-center gap-2">
+            <span class="w-6 h-6 rounded-md bg-psu-100 text-psu-700 flex items-center justify-center text-xs font-black">1</span>
+            Flipped Active Learning Environment
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            This class operates under a <strong>flipped classroom style</strong>. Rather than spending class time on passive lectures copying down definitions that you could read on your own, our time together is spent working through questions from the reading, discussion groups, and active in-class worksheets.
+          </p>
+          <div class="p-3 bg-psu-50 rounded-lg text-xs text-psu-900 border border-psu-200">
+            <strong>The Flipped Trade-Off:</strong> It requires more reading and class prep on your end before Monday, but it means <strong>less traditional homework</strong> because you get your core practice and problem solving done right in the room with instructor guidance and peer support.
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-3">
+          <h3 class="text-lg font-bold text-psu-800 flex items-center gap-2">
+            <span class="w-6 h-6 rounded-md bg-psu-100 text-psu-700 flex items-center justify-center text-xs font-black">2</span>
+            Canvas Modules, Concept Checklists & Friday Labs
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Every week has its own self-contained module in Canvas containing the assigned Spiegelhalter reading, supplementary OER text excerpts to clarify details, short video overviews, and a <strong>Concept Checklist</strong> of skills to master by week's end.
+          </p>
+          <div class="p-3 bg-slate-50 rounded-lg text-xs text-slate-700 border border-slate-200">
+            <strong>Friday Computer Lab (FMH B155):</strong> The instructor introduces the workflow for the first 10–15 minutes, then sets you free to work on your guided JMP software assignment. All lab assignments and related data files are posted directly in the weekly Canvas module.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- READINESS CHECK-IN QUIZ HIGHLIGHT CALLOUT -->
+      <div class="bg-white border-l-4 border-psu-700 rounded-xl p-5 shadow-sm space-y-2">
+        <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+          <span class="text-psu-700 font-extrabold text-base">✓</span>
+          Weekly Readiness Check-in Quizzes (7% of Grade)
+        </h4>
+        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+          To ensure our flipped format discussions and worksheets run smoothly, a brief readiness check-in quiz is due in Canvas before Monday’s class. These focus strictly on the <strong>big-picture concepts from the reading</strong>—not technical trivia or arithmetic derivations. 
+        </p>
+        <p class="text-xs text-slate-600">
+          The final question will always ask for your <strong>'muddiest point'</strong> so we can tackle confusing topics together during class. Your lowest check-in quiz score is automatically dropped. Late readiness check-in quizzes are not accepted for credit.
+        </p>
+      </div>
+    </section>
+
+    <!-- ASSESSMENTS & GRADING CRITERIA -->
+    <section id="assessments-section" class="space-y-6 scroll-mt-16">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-wider text-psu-600">Evaluation</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Assessments & Grading Policies</h2>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- WEIGHTS & TABLE -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+            <table class="w-full text-left text-xs sm:text-sm">
+              <thead class="bg-psu-700 text-white text-[11px] uppercase tracking-wider">
+                <tr>
+                  <th class="py-3 px-4">Assessment</th>
+                  <th class="py-3 px-4">Weight</th>
+                  <th class="py-3 px-4">Deadlines & Submission Rules</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 text-slate-700">
+                <tr>
+                  <td class="py-3 px-4 font-bold text-slate-900">In-Class Worksheets</td>
+                  <td class="py-3 px-4 font-extrabold text-psu-700 text-base">14%</td>
+                  <td class="py-3 px-4 text-xs">
+                    Due at the start of the subsequent class meeting. Late worksheets not accepted. <em>If absent, send with a classmate or scan/email before class time. Lowest score dropped.</em>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4 font-bold text-slate-900">JMP Lab Assignments</td>
+                  <td class="py-3 px-4 font-extrabold text-psu-700 text-base">14%</td>
+                  <td class="py-3 px-4 text-xs">
+                    Due in Canvas by 11:00 AM the Wednesday after assignment. Late: -10% within 24h, -20% within 48h. Beyond 48h not accepted.
+                  </td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4 font-bold text-slate-900">Readiness Check-in Quizzes</td>
+                  <td class="py-3 px-4 font-extrabold text-psu-700 text-base">7%</td>
+                  <td class="py-3 px-4 text-xs">
+                    Due in Canvas before Monday class. Big idea focused + muddiest point. Lowest dropped. No late submissions accepted.
+                  </td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4 font-bold text-slate-900">Midterm Exam 1</td>
+                  <td class="py-3 px-4 font-extrabold text-slate-900 text-base">25%</td>
+                  <td class="py-3 px-4 text-xs">
+                    In class on <strong>Wednesday, October 28th</strong>. Covers Weeks 1–4. 1 single-sided handwritten 8.5x11 note sheet + calculator.
+                  </td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4 font-bold text-slate-900">Exam 2</td>
+                  <td class="py-3 px-4 font-extrabold text-slate-900 text-base">25%</td>
+                  <td class="py-3 px-4 text-xs">
+                    In class on <strong>Friday, December 4th</strong>. Focuses on Weeks 5–10. 1 double-sided handwritten 8.5x11 note sheet + calculator.
+                  </td>
+                </tr>
+                <tr class="bg-psu-50/50">
+                  <td class="py-3 px-4 font-bold text-psu-900">Final Project Poster</td>
+                  <td class="py-3 px-4 font-extrabold text-psu-700 text-base">15%</td>
+                  <td class="py-3 px-4 text-xs text-psu-950">
+                    Presented during Registrar final exam period: <strong>Wednesday, December 9 (11:10 AM – 1:00 PM)</strong>. Project specs released Week 8.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- GRADING SCALE BOX -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
+            <h4 class="font-bold text-slate-900 text-sm uppercase tracking-wider text-psu-700">Official PSU Grading Scale</h4>
+            <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 text-center text-xs">
+              <div class="p-2 rounded bg-psu-50 border border-psu-200"><strong class="block text-psu-800 font-bold">A</strong>(92–100]</div>
+              <div class="p-2 rounded bg-psu-50 border border-psu-200"><strong class="block text-psu-800 font-bold">A-</strong>(89–92]</div>
+              <div class="p-2 rounded bg-slate-50 border border-slate-200"><strong class="block text-slate-800 font-bold">B+</strong>(86–89]</div>
+              <div class="p-2 rounded bg-slate-50 border border-slate-200"><strong class="block text-slate-800 font-bold">B</strong>(82–86]</div>
+              <div class="p-2 rounded bg-slate-50 border border-slate-200"><strong class="block text-slate-800 font-bold">B-</strong>(79–82]</div>
+              <div class="p-2 rounded bg-slate-50 border border-slate-200"><strong class="block text-slate-800 font-bold">C+</strong>(76–79]</div>
+              <div class="p-2 rounded bg-slate-50 border border-slate-200"><strong class="block text-slate-800 font-bold">C</strong>(72–76]</div>
+              <div class="p-2 rounded bg-slate-50 border border-slate-200"><strong class="block text-slate-800 font-bold">C-</strong>(68–72]</div>
+              <div class="p-2 rounded bg-amber-50 border border-amber-200 text-amber-900"><strong class="block font-bold">D+</strong>(66–68]</div>
+              <div class="p-2 rounded bg-amber-50 border border-amber-200 text-amber-900"><strong class="block font-bold">D</strong>(62–66]</div>
+              <div class="p-2 rounded bg-amber-50 border border-amber-200 text-amber-900"><strong class="block font-bold">D-</strong>(59–62]</div>
+              <div class="p-2 rounded bg-rose-50 border border-rose-200 text-rose-900"><strong class="block font-bold">F</strong>[0–59]</div>
+            </div>
+
+            <div class="p-3 bg-slate-50 rounded-lg text-xs text-slate-600 space-y-1">
+              <strong class="text-slate-800 block">Exam Note Policy:</strong>
+              <p>• <strong>Exam 1:</strong> One handwritten, single-sided, standard 8.5" x 11" page.</p>
+              <p>• <strong>Exam 2:</strong> Use initial page + add notes to reverse side (1 double-sided page).</p>
+              <p class="text-[11px] text-slate-500 italic">Standalone scientific or graphing calculators allowed; no phones, tablets, or computers.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- INTERACTIVE GRADE SIMULATOR -->
+    <section id="calculator-section" class="bg-psu-50/70 border border-psu-200 rounded-2xl p-6 sm:p-8 space-y-6 scroll-mt-16 no-print">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-psu-700">Student Tool</span>
+          <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">Interactive Grade Estimator</h2>
+          <p class="text-xs text-slate-600">Enter your anticipated percentages in each category to project your final course grade.</p>
+        </div>
+        <div class="text-right">
+          <span class="text-xs font-semibold text-slate-500 uppercase block">Projected Grade</span>
+          <span id="calc-final-score" class="text-2xl sm:text-3xl font-extrabold text-psu-800 font-mono">--</span>
+          <span id="calc-letter" class="text-sm font-bold text-psu-700 ml-1">(-)</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 text-xs">
+        <div class="bg-white p-3 rounded-xl border border-psu-200">
+          <label class="font-bold text-slate-700 block mb-1">Worksheets (14%)</label>
+          <input type="number" id="sc-worksheets" value="95" min="0" max="100" oninput="calculateGrade()" class="w-full p-2 border border-slate-300 rounded font-mono font-bold text-sm text-center">
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-psu-200">
+          <label class="font-bold text-slate-700 block mb-1">JMP Labs (14%)</label>
+          <input type="number" id="sc-labs" value="92" min="0" max="100" oninput="calculateGrade()" class="w-full p-2 border border-slate-300 rounded font-mono font-bold text-sm text-center">
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-psu-200">
+          <label class="font-bold text-slate-700 block mb-1">Check-in Quizzes (7%)</label>
+          <input type="number" id="sc-quizzes" value="100" min="0" max="100" oninput="calculateGrade()" class="w-full p-2 border border-slate-300 rounded font-mono font-bold text-sm text-center">
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-psu-200">
+          <label class="font-bold text-slate-700 block mb-1">Exam 1 (25%)</label>
+          <input type="number" id="sc-exam1" value="85" min="0" max="100" oninput="calculateGrade()" class="w-full p-2 border border-slate-300 rounded font-mono font-bold text-sm text-center">
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-psu-200">
+          <label class="font-bold text-slate-700 block mb-1">Exam 2 (25%)</label>
+          <input type="number" id="sc-exam2" value="88" min="0" max="100" oninput="calculateGrade()" class="w-full p-2 border border-slate-300 rounded font-mono font-bold text-sm text-center">
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-psu-200">
+          <label class="font-bold text-slate-700 block mb-1">Final Poster (15%)</label>
+          <input type="number" id="sc-poster" value="94" min="0" max="100" oninput="calculateGrade()" class="w-full p-2 border border-slate-300 rounded font-mono font-bold text-sm text-center">
+        </div>
+      </div>
+    </section>
+
+    <!-- REQUIRED MATERIALS & PLATFORMS -->
+    <section id="materials-section" class="space-y-6 scroll-mt-16">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-wider text-psu-600">Course Materials</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Textbooks, Software & Platforms</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-psu-100 text-psu-800 font-bold flex items-center justify-center text-lg">
+            📖
+          </div>
+          <h3 class="font-bold text-slate-900 text-base">The Art of Statistics</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            By <strong>David Spiegelhalter</strong> (<em>How to Learn from Data</em>). Required text. Available via the PSU Bookstore or online in paperback/digital formats.
+          </p>
+          <div class="text-[11px] text-psu-900 bg-psu-50 p-2.5 rounded border border-psu-200">
+            Used for narrative framing, statistical literacy, case studies, and Monday readiness check-in prompts.
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-psu-100 text-psu-800 font-bold flex items-center justify-center text-lg">
+            💻
+          </div>
+          <h3 class="font-bold text-slate-900 text-base">JMP Statistical Software</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Our primary computational and visual modeling engine. A <strong>free Student Edition</strong> is provided for all students via the link on Canvas.
+          </p>
+          <div class="text-[11px] text-amber-900 bg-amber-50 p-2.5 rounded border border-amber-200">
+            <strong>Operating System Note:</strong> JMP does not run on Linux. If you do not run Windows or Mac, plan to use campus computer labs (FMH basement) or an emulator.
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-psu-100 text-psu-800 font-bold flex items-center justify-center text-lg">
+            📐
+          </div>
+          <h3 class="font-bold text-slate-900 text-base">MyOpenMath Practice</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Pre-exam practice sets are integrated into Canvas via MyOpenMath. Completely free and seamlessly connected to Canvas—no separate account required.
+          </p>
+          <div class="text-[11px] text-slate-600 bg-slate-50 p-2.5 rounded border border-slate-200">
+            Made available before exams as optional, low-stakes drills to solidify conceptual confidence.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PSU POLICIES & STUDENT RESOURCES -->
+    <section id="policies-section" class="space-y-6 scroll-mt-16">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-wider text-psu-600">Institutional Commitments</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">PSU Policies & Student Services</h2>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-8">
+        
+        <!-- DEADLINES TABLE -->
+        <div>
+          <h4 class="font-bold text-xs uppercase tracking-wider text-psu-800 mb-3 flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-psu-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            Fall 2026 Academic Deadlines
+          </h4>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-center text-xs">
+            <div class="bg-psu-50/50 p-2.5 rounded-lg border border-psu-200"><strong class="block text-psu-900 font-bold">Oct 4</strong>100% Refund</div>
+            <div class="bg-psu-50/50 p-2.5 rounded-lg border border-psu-200"><strong class="block text-psu-900 font-bold">Oct 9</strong>Add w/ Approval</div>
+            <div class="bg-psu-50/50 p-2.5 rounded-lg border border-psu-200"><strong class="block text-psu-900 font-bold">Oct 11</strong>Drop (No W, 70%)</div>
+            <div class="bg-psu-50/50 p-2.5 rounded-lg border border-psu-200"><strong class="block text-psu-900 font-bold">Oct 18</strong>Drop (W, 40%)</div>
+            <div class="bg-psu-50/50 p-2.5 rounded-lg border border-psu-200"><strong class="block text-psu-900 font-bold">Oct 25</strong>Drop (W, 20%)</div>
+            <div class="bg-white p-2.5 rounded-lg border border-red-200 text-red-900"><strong class="block font-bold">Nov 15</strong>Last Day Drop (W)</div>
+          </div>
+        </div>
+
+        <!-- 3-COLUMNS OF CAMPUS RESOURCES -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-slate-600">
+          
+          <div class="space-y-2">
+            <h5 class="font-bold text-slate-900 text-sm">Disability Resource Center (DRC)</h5>
+            <p>Reasonable accommodations for students encountering barriers. Located in <strong>SMSU Suite 116</strong>.</p>
+            <p>Phone: 503-725-4150 • Email: <a href="mailto:drc@pdx.edu" class="text-psu-700 font-semibold underline">drc@pdx.edu</a></p>
+          </div>
+
+          <div class="space-y-2">
+            <h5 class="font-bold text-slate-900 text-sm">Basic Needs & Support</h5>
+            <p>Assistance for safe shelter, nutrition, and wellness: <strong>Portland State Food Pantry</strong> (<a href="mailto:pantry@pdx.edu" class="underline">pantry@pdx.edu</a>), C.A.R.E. Program (503-725-4422), and SHAC Counseling.</p>
+          </div>
+
+          <div class="space-y-2">
+            <h5 class="font-bold text-slate-900 text-sm">Safety & Emergency Contacts</h5>
+            <p>• <strong>Immediate Threat to Life/Safety:</strong> 503-725-5911 or 9-1-1</p>
+            <p>• <strong>Campus Public Safety (CPSO Non-Emergency):</strong> 503-725-4407</p>
+            <p>• <strong>Confidential Advocates:</strong> 503-894-7982</p>
+          </div>
+
+        </div>
+
+        <!-- POLICIES & CODE OF CONDUCT -->
+        <div class="border-t border-slate-200 pt-4 text-xs text-slate-500 space-y-2">
+          <p><strong>Academic Integrity:</strong> The PSU Student Code of Conduct is the university's policy on academic dishonesty. Violations in this course may result in course failure.</p>
+          <p><strong>Incomplete Grades Policy:</strong> Students do not have a right to receive an Incomplete. The option of an Incomplete is especially problematic because of the collaborative, flipped discussion nature of the course.</p>
+          <p><strong>Title IX & Reporting:</strong> Faculty are mandatory reporters of sexual harassment, violence, and discrimination. If you wish to speak confidentially, contact PSU Confidential Advocates at 503-894-7982.</p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-psu-900 text-slate-300 py-10 border-t-4 border-psu-accent text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <p class="font-bold text-white text-sm">STAT 361: Introduction to Statistical Methods</p>
+        <p class="text-slate-400">Department of Mathematics & Statistics • Portland State University • Fall 2026</p>
+      </div>
+      <div class="text-slate-400 text-right">
+        <p>Instructor: Dr. Kate Freier (FMH 462A • <a href="mailto:kfreier@pdx.edu" class="underline text-psu-300">kfreier@pdx.edu</a>)</p>
+        <p class="text-[11px] text-slate-500 mt-1">Rendered in responsive HTML5 & Tailwind with official PSU Green</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT: DATA & INTERACTIVE RENDERING -->
+  <script>
+    // Rigor & Learning Objectives Dashboard Data
+    const weeklyDashboardData = {
+      1: {
+        week: 1,
+        title: "Foundations, Descriptive Summaries & Visual Discovery",
+        dates: "Sep 28 – Oct 2, 2026",
+        rigorOutOf5: 2.0,
+        rigorTier: "Foundational & Intuitive",
+        rigorColor: "text-emerald-700 bg-emerald-50 border-emerald-200",
+        meterWidth: "40%",
+        meterColor: "bg-emerald-500",
+        mathLevel: 1, // out of 3
+        logicLevel: 2,
+        softwareLevel: 1,
+        mathText: "Low (Basic arithmetic means, IQR fences)",
+        logicText: "Moderate (Operationalizing messy experience into data)",
+        softwareText: "Introductory (JMP Distribution platform & basic plots)",
+        learningObjectives: [
+          { code: "LO 2", label: "Center & Spread", desc: "Clearly describe observed variables using common measures of center and spread." },
+          { code: "LO 10", label: "Software Fluency", desc: "Have experience doing statistical work and modeling using statistical software (JMP)." }
+        ],
+        storyQuote: "Harold Shipman's murder pattern didn't appear in raw counts—it only screamed when plotted against time and patient age.",
+        anxietyShield: "Standard deviation isn't an algebraic trap; it's simply the typical distance an observation sits from its physical balance point.",
+        jmpRole: "JMP computes the five-number summary and flags 1.5×IQR outliers in 2 clicks. You focus on what the skew reveals.",
+        readings: "Spiegelhalter: Introduction & Chapter 2"
+      },
+      2: {
+        week: 2,
+        title: "Random Variables & Continuous Distributions",
+        dates: "Oct 5 – Oct 9, 2026",
+        rigorOutOf5: 3.5,
+        rigorTier: "Moderate (First Abstract Shift)",
+        rigorColor: "text-amber-800 bg-amber-50 border-amber-200",
+        meterWidth: "70%",
+        meterColor: "bg-amber-500",
+        mathLevel: 2,
+        logicLevel: 3,
+        softwareLevel: 2,
+        mathText: "Moderate-High (Calculus density integration & z-score standardization)",
+        logicText: "High (Understanding why P(X = c) = 0 while continuous areas have probability)",
+        softwareText: "Moderate (Shading distributions, calculating quantiles, and evaluating Q-Q plots in JMP)",
+        learningObjectives: [
+          { code: "LO 3", label: "Random Variables", desc: "Understand random variables; interpret Probability Density Functions (PDF) & Cumulative Distribution Functions (CDF)." },
+          { code: "LO 4", label: "Continuous Models", desc: "Recognize when Uniform, Normal, and Exponential distributions apply in practice." },
+          { code: "LO 10", label: "Software Fluency", desc: "Model continuous distributions and normal quantile plots in JMP." }
+        ],
+        storyQuote: "Standardizing with z-scores creates a unitless ruler to compare incompatible feats—like Olympic runners vs. shot-putters.",
+        anxietyShield: "Integration of f(x) is just shading area under a curve. JMP does the calculus integration; your job is interpreting the tail probability.",
+        jmpRole: "JMP's Distribution Calculator shades probabilities and normal Q-Q plots instantly, bypassing tedious paper z-tables.",
+        readings: "Spiegelhalter: Chapter 3"
+      },
+      3: {
+        week: 3,
+        title: "Probability Foundations & Counting Logic",
+        dates: "Oct 12 – Oct 16, 2026",
+        rigorOutOf5: 4.0,
+        rigorTier: "High (Combinatoric & Conditional Friction)",
+        rigorColor: "text-rose-800 bg-rose-50 border-rose-200",
+        meterWidth: "80%",
+        meterColor: "bg-rose-500",
+        mathLevel: 2,
+        logicLevel: 3,
+        softwareLevel: 1,
+        mathText: "Moderate (Factorial counting, Permutations nPr vs Combinations nCr)",
+        logicText: "High (Conditional probability P(A|B), independence, and the False Positive Paradox)",
+        softwareText: "Low-Moderate (Contingency tables, mosaic plots, and frequency trees in JMP)",
+        learningObjectives: [
+          { code: "LO 1", label: "Probability Axioms", desc: "Be comfortable with basic probability rules, counting operations, and conditional probability." },
+          { code: "LO 10", label: "Software Fluency", desc: "Build two-way tables, mosaic plots, and evaluate conditional frequencies in JMP." }
+        ],
+        storyQuote: "Why a medical screening test with 99% accuracy can yield an 85% false-alarm rate when the illness is rare.",
+        anxietyShield: "We replace Bayes' formula with visual 10,000-person Frequency Trees so conditional logic becomes natural head-counting.",
+        jmpRole: "JMP's Fit Y by X platform creates mosaic plots and automated row/column conditional proportions, bypassing manual formula confusion.",
+        readings: "Spiegelhalter: Chapter 8"
+      },
+      4: {
+        week: 4,
+        title: "Named Discrete Probability Distributions",
+        dates: "Oct 19 – Oct 23, 2026",
+        rigorOutOf5: 3.5,
+        rigorTier: "Moderate (Model Recognition)",
+        rigorColor: "text-amber-800 bg-amber-50 border-amber-200",
+        meterWidth: "70%",
+        meterColor: "bg-amber-500",
+        mathLevel: 2,
+        logicLevel: 3,
+        softwareLevel: 2,
+        mathText: "Moderate (Binomial formula nCx·p^x·q^(n-x), Poisson rate scaling)",
+        logicText: "High (Diagnosing the right model: Binomial vs Poisson vs Hypergeometric)",
+        softwareText: "Moderate (JMP Distribution Calculator for exact and cumulative discrete probabilities)",
+        learningObjectives: [
+          { code: "LO 3", label: "PMFs & CDFs", desc: "Understand discrete probability mass functions and cumulative distributions." },
+          { code: "LO 4", label: "Discrete Models", desc: "Recognize when Binomial, Negative Binomial, Poisson, and Hypergeometric models apply." },
+          { code: "LO 10", label: "Software Fluency", desc: "Compute exact and cumulative discrete probabilities via software." }
+        ],
+        storyQuote: "Tracking rare airplane part flaws, emergency room calls, and lightning strikes across time and space.",
+        anxietyShield: "Ask the diagnostic question: 'What is X counting?' Are trials fixed (Binomial)? Dependent without replacement (Hypergeometric)? Or rare events over time (Poisson)?",
+        jmpRole: "Never calculate cumulative sums by hand for n=50. JMP's Distribution Calculator computes P(X ≥ 40) directly.",
+        readings: "No Spiegelhalter reading (See Canvas module for assigned reading)"
+      },
+      5: {
+        week: 5,
+        title: "Midterm Exam 1 & Central Limit Theorem Launch",
+        dates: "Oct 26 – Oct 30, 2026",
+        rigorOutOf5: 4.5,
+        rigorTier: "High (Exam Review + Major Conceptual Threshold)",
+        rigorColor: "text-rose-800 bg-rose-50 border-rose-200",
+        meterWidth: "90%",
+        meterColor: "bg-rose-500",
+        mathLevel: 2,
+        logicLevel: 3,
+        softwareLevel: 3,
+        mathText: "Moderate (Exam synthesis; Standard Error scaling by 1/√n)",
+        logicText: "Very High (Separating the sample distribution from the sampling distribution of a mean)",
+        softwareText: "High (Live interactive sampling simulation applets in Lab 5)",
+        learningObjectives: [
+          { code: "LO 1–4", label: "Synthesis", desc: "Synthesize all pre-inferential probability, data structures, and distributions on Midterm Exam 1." },
+          { code: "LO 5", label: "Sampling & CLT", desc: "Firm conceptual understanding of sampling variability, sampling distributions, and the CLT." },
+          { code: "LO 8", label: "Simulation", desc: "Gain conceptual understanding of inference procedures through hands-on simulation." },
+          { code: "LO 10", label: "Software Fluency", desc: "Run live sampling simulations and examine the distribution of sample means in JMP." }
+        ],
+        storyQuote: "Exam 1 celebrates Weeks 1–4. Friday Lab 5 launches the central miracle of statistics: regardless of parent shape, sample means form a bell curve.",
+        anxietyShield: "Exam stress is lowered with a full 1-page handwritten note sheet. Friday's lab has zero arithmetic drill—it is purely visual, watching simulated sample means form bell curves in real time.",
+        jmpRole: "JMP Sample Means Teaching Applet: pulling 10,000 samples live to watch the sampling distribution collapse predictably by σ/√n.",
+        readings: "Spiegelhalter: Chapter 9"
+      },
+      6: {
+        week: 6,
+        title: "Empirical Bootstrapping & Confidence Intervals",
+        dates: "Nov 2 – Nov 6, 2026",
+        rigorOutOf5: 3.0,
+        rigorTier: "Empowering / Simulation-First",
+        rigorColor: "text-emerald-700 bg-emerald-50 border-emerald-200",
+        meterWidth: "60%",
+        meterColor: "bg-emerald-500",
+        mathLevel: 1,
+        logicLevel: 2,
+        softwareLevel: 3,
+        mathText: "Very Low (Resampling logic & empirical percentile cutoffs)",
+        logicText: "Moderate-High (The Bootstrap Principle: Sample is to Population as Resamples are to Sample)",
+        softwareText: "High (Executing 1,000 bootstrap iterations and extracting quantiles in JMP)",
+        learningObjectives: [
+          { code: "LO 5", label: "Sampling Distribution", desc: "Firm conceptual understanding of sampling distributions and variability." },
+          { code: "LO 7", label: "Confidence Intervals", desc: "Create and accurately interpret confidence intervals using empirical bootstrapping." },
+          { code: "LO 8", label: "Simulation Inference", desc: "Gain conceptual understanding of inference procedures through hands-on simulation." },
+          { code: "LO 10", label: "Software Fluency", desc: "Execute 1,000-run bootstrap simulations in JMP to quantify standard error." }
+        ],
+        storyQuote: "What if your population isn't normal or you don't know σ? We pull ourselves up by our own bootstraps by resampling our observed data 1,000 times with replacement.",
+        anxietyShield: "The 20-fisherman net metaphor: The true parameter is a stationary fish in the river; our confidence intervals are 20 different nets cast. 19 catch it; 1 misses.",
+        jmpRole: "Right-click any mean or median in JMP, select 'Bootstrap', generate 1,000 replicates, and shade the middle 95% empirical quantiles.",
+        readings: "Spiegelhalter: Chapter 7"
+      },
+      7: {
+        week: 7,
+        title: "Simulation-Based Decision Making & Tests",
+        dates: "Nov 9 – Nov 13, 2026",
+        rigorOutOf5: 3.5,
+        rigorTier: "Moderate (Demystifying P-values)",
+        rigorColor: "text-amber-800 bg-amber-50 border-amber-200",
+        meterWidth: "70%",
+        meterColor: "bg-amber-500",
+        mathLevel: 1,
+        logicLevel: 3,
+        softwareLevel: 2,
+        mathText: "Very Low (Permutation counting)",
+        logicText: "High (Null model logic: 'How surprising would our sample data be if nothing was actually going on?')",
+        softwareText: "Moderate-High (Randomization and permutation testing in JMP)",
+        learningObjectives: [
+          { code: "LO 6", label: "Testing Problems", desc: "Perform and communicate results from testing problems via simulation." },
+          { code: "LO 7", label: "Bootstrap Intervals", desc: "Construct empirical bootstrap confidence intervals." },
+          { code: "LO 8", label: "Simulation Logic", desc: "Hands-on simulation for statistical decision-making." },
+          { code: "LO 10", label: "Software Fluency", desc: "Execute permutation tests in JMP to evaluate statistical discernibility." }
+        ],
+        storyQuote: "Testing hypotheses without memorizing formula tables. Simulating 'null worlds' through card shuffling to determine if an observed effect could arise by pure chance.",
+        anxietyShield: "The p-value is simply the 'Surprise Factor': the probability of observing data this extreme if the world was truly boring and nothing happened.",
+        jmpRole: "JMP Permutation Testing: shuffling treatment labels to construct empirical null distributions visually on screen.",
+        readings: "Spiegelhalter: Chapter 10"
+      },
+      8: {
+        week: 8,
+        title: "Classical Theory-Based Inference",
+        dates: "Nov 16 – Nov 20, 2026",
+        rigorOutOf5: 4.0,
+        rigorTier: "High (Parametric Formula Integration)",
+        rigorColor: "text-rose-800 bg-rose-50 border-rose-200",
+        meterWidth: "80%",
+        meterColor: "bg-rose-500",
+        mathLevel: 3,
+        logicLevel: 2,
+        softwareLevel: 2,
+        mathText: "Moderate-High (Student's t-scores, degrees of freedom, standard error formulas)",
+        logicText: "Moderate (Mapping simulation concepts to mathematical shortcut formulas)",
+        softwareText: "Moderate (Running full parametric test and interval pipelines in JMP)",
+        learningObjectives: [
+          { code: "LO 4", label: "Student's t Model", desc: "Understand Student's t and Normal distributions in inference contexts." },
+          { code: "LO 6", label: "One-Sample Tests", desc: "Create, perform, and communicate results from one-sample tests of means and proportions." },
+          { code: "LO 7", label: "Theoretical CIs", desc: "Create and accurately interpret confidence intervals using classical formulas." },
+          { code: "LO 10", label: "Software Fluency", desc: "Run parametric t-tests and z-intervals in JMP; inspect model diagnostic assumptions." }
+        ],
+        storyQuote: "William Gosset's 1908 Guinness Brewery discovery of the Student's t-distribution. When can mathematical theory replace digital simulations? Poster specs released!",
+        anxietyShield: "Because you spent Weeks 6–7 seeing bootstrapping, the formula x̄ ± t*(s/√n) is understood as an efficient approximation of the bootstrap net.",
+        jmpRole: "JMP automatically checks normality assumptions, computes test statistics, and outputs exact p-values and confidence intervals simultaneously.",
+        readings: "No Spiegelhalter reading (See Canvas module for assigned reading)"
+      },
+      9: {
+        week: 9,
+        title: "Scientific Replication & Poster Studio",
+        dates: "Nov 23 – Nov 27, 2026",
+        rigorOutOf5: 2.5,
+        rigorTier: "Applied / Collaborative Studio",
+        rigorColor: "text-emerald-700 bg-emerald-50 border-emerald-200",
+        meterWidth: "50%",
+        meterColor: "bg-emerald-500",
+        mathLevel: 1,
+        logicLevel: 3,
+        softwareLevel: 3,
+        mathText: "Low",
+        logicText: "High (Methodological skepticism, detecting publication bias, p-hacking, and HARKing)",
+        softwareText: "High (Independent dataset exploration and figure rendering in JMP)",
+        learningObjectives: [
+          { code: "LO 6", label: "Assumptions & Power", desc: "Check related model assumptions and calculate statistical power." },
+          { code: "LO 9", label: "Poster Communication", desc: "Prepare professional summaries of data and communicate knowledge via a visual poster presentation." },
+          { code: "LO 10", label: "Software Fluency", desc: "Statistical work and modeling using statistical software (JMP)." }
+        ],
+        storyQuote: "The Scientific Replication Crisis and Alberto Cairo's visual honesty principles. Why do published findings fail, and how do we design charts that tell honest stories?",
+        anxietyShield: "Wednesday is a collaborative in-class workshop in OND 202 where students get live feedback on their JMP figures before the holiday break.",
+        jmpRole: "Exporting high-resolution graphics and publication-quality summary tables from JMP into poster presentation templates.",
+        readings: "Spiegelhalter: Chapters 12 & 13"
+      },
+      10: {
+        week: 10,
+        title: "Project Peer Review, Exam 2 & Poster Capstone",
+        dates: "Nov 30 – Dec 4, 2026",
+        rigorOutOf5: 4.5,
+        rigorTier: "High (Synthesis, Exam 2 & Poster Capstone)",
+        rigorColor: "text-rose-800 bg-rose-50 border-rose-200",
+        meterWidth: "90%",
+        meterColor: "bg-rose-500",
+        mathLevel: 2,
+        logicLevel: 3,
+        softwareLevel: 2,
+        mathText: "Moderate (Exam 2)",
+        logicText: "Very High (Synthesizing inference, assumptions, and scientific communication)",
+        softwareText: "Moderate (Final poster preparation for Dec 9 showcase)",
+        learningObjectives: [
+          { code: "LO 5–8", label: "Inferential Synthesis", desc: "Synthesize sampling variability, bootstrap CIs, randomization tests, and theoretical inference on Exam 2." },
+          { code: "LO 9", label: "Poster Showcase", desc: "Communicate knowledge from statistical analysis to professionals in multiple disciplines via a visual poster presentation." },
+          { code: "LO 10", label: "Software Fluency", desc: "Presenting authentic statistical work and modeling completed in JMP." }
+        ],
+        storyQuote: "Becoming a statistical skeptic in a world drowning in data. Exam 2 covers Weeks 5–10, followed by our public poster session on Wednesday, Dec 9.",
+        anxietyShield: "Exam 2 is non-cumulative (Weeks 5–10) and allows your original Exam 1 note sheet plus additional notes on the reverse side (1 double-sided page).",
+        jmpRole: "Presenting your authentic JMP analysis during the final poster session (Dec 9, 11:10 AM – 1:00 PM).",
+        readings: "Spiegelhalter: Chapter 14"
+      }
+    };
+
+    function renderRigorDashboard(w) {
+      const data = weeklyDashboardData[w];
+      
+      // Dots generator for demand level (1 to 3 dots)
+      const renderDots = (lvl) => {
+        let dots = '';
+        for (let i = 1; i <= 3; i++) {
+          if (i <= lvl) {
+            dots += '<span class="inline-block w-2.5 h-2.5 rounded-full bg-psu-700 mr-1"></span>';
+          } else {
+            dots += '<span class="inline-block w-2.5 h-2.5 rounded-full bg-slate-200 mr-1"></span>';
+          }
+        }
+        return dots;
+      };
+
+      // Learning Objectives Cards
+      const loCards = data.learningObjectives.map(lo => `
+        <div class="bg-psu-50/70 border border-psu-200/80 rounded-xl p-3 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-psu-700 text-white font-mono tracking-wider">${lo.code}</span>
+            <span class="text-[11px] font-bold text-psu-900">${lo.label}</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-snug">${lo.desc}</p>
+        </div>
+      `).join('');
+
+      return `
+        <!-- HEADER BLOCK -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="bg-psu-700 text-white text-xs font-black px-2.5 py-0.5 rounded">WEEK ${data.week}</span>
+              <span class="text-xs font-semibold text-slate-500">${data.dates}</span>
+            </div>
+            <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900">${data.title}</h3>
+            <p class="text-xs text-psu-700 font-medium mt-0.5">Assigned: ${data.readings}</p>
+          </div>
+
+          <!-- RIGOR METER GAUGE -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 min-w-[260px] space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-slate-500 uppercase tracking-wider text-[11px]">Cognitive Rigor</span>
+              <span class="font-extrabold text-sm ${data.rigorColor.split(' ')[0]} font-mono">${data.rigorOutOf5}</span>
+            </div>
+            <!-- Visual Bar -->
+            <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+              <div class="${data.meterColor} h-2.5 rounded-full transition-all duration-500" style="width: ${data.meterWidth}"></div>
+            </div>
+            <div class="text-[11px] font-bold text-right text-slate-600">${data.rigorTier}</div>
+          </div>
+        </div>
+
+        <!-- 3-PILLAR DEMAND GAUGES (MATH vs LOGIC vs SOFTWARE) -->
+        <div>
+          <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Demand Balance: Where Your Energy Belongs</h4>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            
+            <div class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-2xs space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-700">Math & Formulas</span>
+                <div>${renderDots(data.mathLevel)}</div>
+              </div>
+              <p class="text-xs text-slate-500 leading-snug">${data.mathText}</p>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-2xs space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-700">Logic & Skepticism</span>
+                <div>${renderDots(data.logicLevel)}</div>
+              </div>
+              <p class="text-xs text-slate-500 leading-snug">${data.logicText}</p>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-2xs space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-700">JMP Software</span>
+                <div>${renderDots(data.softwareLevel)}</div>
+              </div>
+              <p class="text-xs text-slate-500 leading-snug">${data.softwareText}</p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- LEARNING OBJECTIVES TIED TO THIS WEEK -->
+        <div class="space-y-2">
+          <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Course Learning Objectives Targeted</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+            ${loCards}
+          </div>
+        </div>
+
+        <!-- THREE PEDAGOGICAL PILLARS (STORY, ANXIETY SHIELD, JMP BRIDGE) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          
+          <!-- STORY -->
+          <div class="bg-psu-50/60 border border-psu-200 rounded-xl p-4 flex flex-col justify-between space-y-2">
+            <div>
+              <div class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-psu-800 mb-1">
+                <span>📰</span>
+                <span>The Data Story</span>
+              </div>
+              <p class="text-xs text-slate-700 italic leading-relaxed">"${data.storyQuote}"</p>
+            </div>
+            <span class="text-[10px] uppercase font-bold tracking-wider text-psu-600">Contextual Hook</span>
+          </div>
+
+          <!-- ANXIETY SHIELD -->
+          <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-4 flex flex-col justify-between space-y-2">
+            <div>
+              <div class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-900 mb-1">
+                <span>🛡️</span>
+                <span>Anxiety Shield</span>
+              </div>
+              <p class="text-xs text-slate-700 leading-relaxed">${data.anxietyShield}</p>
+            </div>
+            <span class="text-[10px] uppercase font-bold tracking-wider text-amber-700">De-Mathematizing</span>
+          </div>
+
+          <!-- JMP POWER MOVE -->
+          <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4 flex flex-col justify-between space-y-2">
+            <div>
+              <div class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-900 mb-1">
+                <span>💻</span>
+                <span>JMP Power Move</span>
+              </div>
+              <p class="text-xs text-slate-700 leading-relaxed">${data.jmpRole}</p>
+            </div>
+            <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-700">Software Over Plumbing</span>
+          </div>
+
+        </div>
+      `;
+    }
+
+    // Build Pill Buttons
+    function initWeekPills() {
+      const bar = document.getElementById('week-pill-bar');
+      let html = '';
+      for (let i = 1; i <= 10; i++) {
+        const specialTag = (i === 5) ? ' (Exam 1)' : (i === 10) ? ' (Exam 2)' : '';
+        html += `
+          <button onclick="switchWeekTab(${i})" id="pill-${i}" 
+                  class="px-3.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 bg-white text-slate-700 hover:border-psu-700 transition flex-shrink-0 ${i === 1 ? 'week-pill-active' : ''}">
+            Week ${i}${specialTag}
+          </button>
+        `;
+      }
+      bar.innerHTML = html;
+    }
+
+    function switchWeekTab(w) {
+      for (let i = 1; i <= 10; i++) {
+        const btn = document.getElementById('pill-' + i);
+        if (btn) {
+          if (i === w) {
+            btn.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold border border-psu-700 bg-psu-700 text-white transition flex-shrink-0 week-pill-active";
+          } else {
+            btn.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 bg-white text-slate-700 hover:border-psu-700 transition flex-shrink-0";
+          }
+        }
+      }
+      document.getElementById('visual-card').innerHTML = renderRigorDashboard(w);
+    }
+
+    // Live Table Filtering
+    function filterTable() {
+      const input = document.getElementById("schedule-search");
+      const filter = input.value.toLowerCase();
+      const rows = document.querySelectorAll(".schedule-row");
+
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        if (text.includes(filter)) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
+    }
+
+    // Interactive Grade Calculator
+    function calculateGrade() {
+      const w = parseFloat(document.getElementById('sc-worksheets').value) || 0;
+      const l = parseFloat(document.getElementById('sc-labs').value) || 0;
+      const q = parseFloat(document.getElementById('sc-quizzes').value) || 0;
+      const e1 = parseFloat(document.getElementById('sc-exam1').value) || 0;
+      const e2 = parseFloat(document.getElementById('sc-exam2').value) || 0;
+      const p = parseFloat(document.getElementById('sc-poster').value) || 0;
+
+      const total = (w * 0.14) + (l * 0.14) + (q * 0.07) + (e1 * 0.25) + (e2 * 0.25) + (p * 0.15);
+      const rounded = total.toFixed(2);
+      document.getElementById('calc-final-score').innerText = rounded + "%";
+
+      let letter = "F";
+      if (total > 92) letter = "A";
+      else if (total > 89) letter = "A-";
+      else if (total > 86) letter = "B+";
+      else if (total > 82) letter = "B";
+      else if (total > 79) letter = "B-";
+      else if (total > 76) letter = "C+";
+      else if (total > 72) letter = "C";
+      else if (total > 68) letter = "C-";
+      else if (total > 66) letter = "D+";
+      else if (total > 62) letter = "D";
+      else if (total > 59) letter = "D-";
+      else letter = "F";
+
+      document.getElementById('calc-letter').innerText = "(" + letter + ")";
+    }
+
+    // Run initial state
+    document.addEventListener("DOMContentLoaded", () => {
+      initWeekPills();
+      switchWeekTab(1);
+      calculateGrade();
+    });
+  </script>
+</body>
+</html>
